@@ -65,7 +65,7 @@ src/
 ├── routes/        # API endpoint definitions
 ├── services/      # Business logic layer
 ├── repository/    # Data access layer (DB queries & operations)
-├── middlewares/   # (Optional) Auth, error handling, etc.
+├── middlewares/   # Auth, error handling, etc.
 ├── utils/         # Reusable helpers & contatns
 ├── config/        # Configuration & DB setup
 ├── types/         # Shared TypeScript types & interfaces

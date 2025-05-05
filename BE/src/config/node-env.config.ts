@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { NodeEnv } from '@/utils/constants';
+import { NodeEnv } from '@/utils';
 
 dotenv.config();
 
