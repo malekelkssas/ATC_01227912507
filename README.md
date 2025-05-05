@@ -71,20 +71,6 @@ erDiagram
 
 ---
 
-## 🗂️ Backend Structure
+## 🗂️ Backend
 
-The backend follows a clean, scalable architecture:
-
-```
-src/
-├── controllers/   # Handle HTTP requests & responses
-├── models/        # Mongoose schemas & models
-├── routes/        # API endpoint definitions
-├── services/      # Business logic layer
-├── repository/    # Data access layer (DB queries & operations)
-├── middlewares/   # (Optional) Auth, error handling, etc.
-├── utils/         # Reusable helpers & contatns
-├── config/        # Configuration & DB setup
-├── types/         # Shared TypeScript types & interfaces
-└── index.js       # Entry point for Express app
-```
+For more detailed information about the backend implementation, including security measures, data models, and API documentation, please refer to the [Backend README](./BE/README.md).
