@@ -1,7 +1,12 @@
+<div align="center">
+
 # 🦆 QuackSeats Backend
 
+</div>
+
+
 ## Data Schema/Models
-4. 
+
 ```mermaid
 erDiagram
     USER {
