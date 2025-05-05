@@ -87,6 +87,51 @@ The backend implements several security layers to protect against common vulnera
 
 ---
 
+## 🚨 Error Handling
+
+The backend implements a robust error handling system with centralized error management:
+
+### Global Error Handler
+
+A global error handler middleware ([`error-handler.middleware.ts`](./src/middlewares/error-handler.middleware.ts)) processes all errors and returns consistent error responses:
+
+```ts
+// Example error response format
+{
+    statusCode: number,
+    message: string
+}
+```
+
+### Mongoose Error Handling
+
+Specialized handling for common Mongoose errors, inspired by [Sling Academy's guide](https://www.slingacademy.com/article/how-to-handle-errors-in-mongoose-an-in-depth-guide/):
+
+- **Validation Errors**: Schema validation failures
+- **Cast Errors**: Invalid ObjectId or type mismatches
+- **Duplicate Key Errors**: Unique index violations
+
+```ts
+// Example: Handling Mongoose errors
+try {
+    await user.save();
+} catch (error) {
+    const response = handleMongooseError(error);
+    // Returns formatted error response
+}
+```
+
+### Custom Error Classes
+
+The system uses custom error classes for different scenarios:
+
+- `AppError`: Base error class for application errors
+- `DatabaseError`: Database-specific errors
+- `ValidationError`: Input validation errors
+- `NotFoundError`: Resource not found errors
+
+---
+
 ## 🏗️ Repository Pattern & Atomic Transactions
 
 ### Generic Repository for Mongoose
