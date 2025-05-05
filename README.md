@@ -4,17 +4,23 @@
 
 ## Features
 
-* 🎟️ Seamless event browsing & booking
-* 🧾 Personal booking management
-* 🛠️ Admin panel for event control
-* 🧩 Scalable and modern stack
+* event browsing & booking
+* Personal booking management
+* Admin panel for event control
+* Fully responsive across devices
+* Dark mode toggle support & A duck-themed loyalty badge system!
+* Multi-language support (English, Arabic)
 
-## Tech Stack
+## 🧱 Tech Stack
 
-* **Frontend:** React
-* **Backend:** Node.js / Express
-* **Database:** MongoDB
-* **Deployment:** 
+| Layer      | Tech                                                 |
+| ---------- | ---------------------------------------------------- |
+| Frontend   | React + Tailwind CSS + DaisyUI + **Redux Toolkit** |
+| Backend    | Node.js + Express                                    |
+| Database   | MongoDB (via Mongoose)                               |
+| Auth       | JWT-based auth with role support                     |
+| Deployment | **AWS (EC2)**        |
+
 
 ## Data Schema/Models
 4. 
