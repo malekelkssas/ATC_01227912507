@@ -6,6 +6,7 @@ import { NodeEnv } from './utils/constants/node-env.constants';
 import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
 import { HttpMethod } from './utils/constants';
+import rateLimit from 'express-rate-limit';
 
 dotenv.config();
 const app = express();
@@ -25,6 +26,11 @@ app.use(cors({
 app.use(helmet());
 app.use(express.json({ limit: '10kb' }));
 app.use(mongoSanitize());
+const limiter = rateLimit({
+  max: 300,
+  windowMs: 60 * 1000, // 1 minute
+  message: 'Too many requests, please try again later!',
+});
 
 
 app.get('/', (req, res) => {
