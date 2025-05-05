@@ -79,3 +79,43 @@ The backend implements several security layers to protect against common vulnera
 - **Request Size Limit**: Limits JSON payload size to 10kb
 - **MongoDB Sanitization**: Prevents NoSQL injection attacks
 - **XSS Protection**: Sanitizes user input to prevent cross-site scripting attacks
+
+---
+
+## 🏗️ Repository Pattern & Atomic Transactions
+
+### Generic Repository for Mongoose
+
+To promote code reuse and consistency, I implement a **generic repository class** for common Mongoose operations (CRUD). This approach is inspired by [this article](https://medium.com/@erickwendel/generic-repository-with-typescript-and-node-js-731c10a1b98e).
+
+> **Snapshot:**  
+> See [`src/types/repository.ts`](./src/types/repository.ts)
+> ```ts
+> export abstract class BaseRepository<T extends Document> {
+>   protected model: Model<T>;
+>   constructor(model: Model<T>) { this.model = model; }
+>   async create(item: Partial<T>): Promise<T> { return this.model.create(item); }
+> }
+> ```
+
+This pattern allows all repositories to inherit common logic, reducing duplication and improving maintainability.
+
+---
+
+### Atomic Operations with Transactions
+
+I use an **atomic approach** for database operations: either all changes succeed, or none are applied. This is achieved by wrapping requests in a MongoDB transaction using a middleware.
+
+> **Snapshot:**  
+> See [`src/middlewares/transaction.middleware.ts`](./src/middlewares/transaction.middleware.ts)
+> ```ts
+> export const transactionMiddleware = (req, _, next) => {
+>   mongoose.startSession().then((session) => {
+>     session.startTransaction();
+>     req.session = session;
+>     next();
+>   });
+> };
+> ```
+
+This ensures data consistency and integrity, especially for multi-step operations.
