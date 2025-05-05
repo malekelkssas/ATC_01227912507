@@ -1,6 +1,6 @@
 # 🦆 QuackSeats
 
-**QuackSeats** is a full-stack event booking platform where users can discover and reserve events, manage their bookings, and admins can oversee everything through a sleek web-based dashboard.
+**QuackSeats** is a full-stack event booking platform where users can discover and reserve events, manage their bookings, and admins can oversee everything through a web-based dashboard.
 
 ## Features
 
