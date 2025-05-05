@@ -68,3 +68,23 @@ erDiagram
     EVENT ||--o{ EVENT_TAG : has
     TAG ||--o{ EVENT_TAG : used_in
 ```
+
+---
+
+## 🗂️ Backend Structure
+
+The backend follows a clean, scalable architecture:
+
+```
+src/
+├── controllers/   # Handle HTTP requests & responses
+├── models/        # Mongoose schemas & models
+├── routes/        # API endpoint definitions
+├── services/      # Business logic layer
+├── repository/    # Data access layer (DB queries & operations)
+├── middlewares/   # (Optional) Auth, error handling, etc.
+├── utils/         # Reusable helpers & contatns
+├── config/        # Configuration & DB setup
+├── types/         # Shared TypeScript types & interfaces
+└── index.js       # Entry point for Express app
+```
