@@ -31,6 +31,7 @@ const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   message: 'Too many requests, please try again later!',
 });
+app.use(limiter);
 
 
 app.get('/', (req, res) => {
