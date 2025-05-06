@@ -1,13 +1,12 @@
-import { MONGOOSE_ERRORS } from "../constants/mongoose-errors.constants";
 import { IErrorResponse } from "@/types";
-import { HTTP_STATUS_CODE, } from "../constants/http-status-code.constants";
-import { ERROR_MESSAGES } from "../constants/error-messages.constants";
+import { HTTP_STATUS_CODE, ERROR_MESSAGES, MONGOOSE_ERRORS } from "@/utils";
 
 /**
  * REF: https://www.slingacademy.com/article/how-to-handle-errors-in-mongoose-an-in-depth-guide/
  */
 
 // TEST: need to be tested
+
 export function handleMongooseError(err: any): IErrorResponse {
 
     const response: IErrorResponse = {

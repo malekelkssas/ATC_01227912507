@@ -1,10 +1,19 @@
 import { AppError } from './AppError.js';
-import { HTTP_STATUS_CODE } from '../constants/http-status-code.constants.js';
-import { MONGOOSE_ERRORS } from '../constants/mongoose-errors.constants.js';
+import { HTTP_STATUS_CODE, MONGOOSE_ERRORS } from '@/utils';
 
 export class DatabaseError extends AppError {
-  constructor(message: string) {
-    super(message, HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR);
-    this.name = MONGOOSE_ERRORS.DATABASE_ERROR;
+  keyValue?: any;
+  path?: string;
+  value?: any;
+  errors?: any;
+
+  constructor(error: any) {
+    super(error.message, HTTP_STATUS_CODE.BAD_REQUEST);
+    this.name = error.name || MONGOOSE_ERRORS.DATABASE_ERROR;
+
+    if (error.keyValue) this.keyValue = error.keyValue;
+    if (error.path) this.path = error.path;
+    if (error.value) this.value = error.value;
+    if (error.errors) this.errors = error.errors;
   }
 }

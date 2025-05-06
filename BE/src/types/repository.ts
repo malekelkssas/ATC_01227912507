@@ -1,5 +1,5 @@
+import { WrapDatabaseError } from '@/utils';
 import { IWrite, IRead } from './interfaces';
-
 import { Model, Document } from 'mongoose';
 
 /**
@@ -13,6 +13,7 @@ export abstract class BaseRepository<T extends Document> implements IWrite<T>, I
       this.model = model;
     }
 
+    @WrapDatabaseError
     async create(item: Partial<T>): Promise<T> {
         const doc = await this.model.create(item);
         return doc;

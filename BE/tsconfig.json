@@ -15,7 +15,9 @@
     "resolveJsonModule": true,
     "paths": {
         "@/*": ["src/*"]
-    }
+    },
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     },
     "include": ["src/**/*"],
     "exclude": ["dist", "node_modules"],

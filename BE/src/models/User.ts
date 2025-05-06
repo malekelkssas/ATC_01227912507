@@ -1,6 +1,7 @@
 import { model, Schema } from "mongoose";
-import { UserRoleEnum, IUser } from "@/types";
-import { USER_SCHEMA_NAME } from "@/utils";
+import { UserRoleEnum, IUser, MongooseHooksEnum } from "@/types";
+import { USER_SCHEMA_NAME, USER_FIELDS } from "@/utils";
+import bcrypt from "bcrypt";
 
 export const UserSchema = new Schema<IUser>(
   {
@@ -34,5 +35,19 @@ export const UserSchema = new Schema<IUser>(
     timestamps: true,
   }
 );
+
+UserSchema.pre(MongooseHooksEnum.SAVE, async function (next) {
+  if (!this.isModified(USER_FIELDS.PASSWORD)) return next();
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+UserSchema.methods.comparePassword = async function (
+  candidatePassword: string
+): Promise<boolean> {
+  return bcrypt.compare(candidatePassword, this.password);
+};
 
 export const User = model<IUser>(USER_SCHEMA_NAME, UserSchema);
