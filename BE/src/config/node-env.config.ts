@@ -6,6 +6,9 @@ dotenv.config();
 export const config = {
   port: process.env.PORT || 3000,
   mongoUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/quackseat',
-  jwtSecret: process.env.JWT_SECRET || 'The Quack is the best',
   nodeEnv: process.env.NODE_ENV || NodeEnv.DEVELOPMENT,
+  jwtSecret: process.env.JWT_SECRET || 'The Quack is the best',
+  jwtExpiration: process.env.JWT_EXPIRATION || '1h',
+  jwtRefreshExpiration: process.env.JWT_REFRESH_EXPIRATION || '7d',
+  jwtRefreshSecret: process.env.JWT_REFRESH_SECRET || 'The Quack is the best',
 };

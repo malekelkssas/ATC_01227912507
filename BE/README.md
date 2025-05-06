@@ -183,7 +183,7 @@ To ensure robust and type-safe validation of incoming requests, this project use
 import { UserRoleEnum } from '../enums';
 import { z } from 'zod';
 
-export const CreateUserSchema = z.object({
+export const CreateUserDto = z.object({
   name: z
     .string()
     .min(3, "Name must be at least 3 characters long")

@@ -7,7 +7,7 @@ import mongoSanitize from "express-mongo-sanitize";
 import { HttpMethod, NodeEnv } from "./utils";
 import rateLimit from "express-rate-limit";
 import { connectDB } from "./config";
-import { transactionMiddleware } from "./middlewares";
+import { errorHandler, transactionMiddleware } from "./middlewares";
 
 dotenv.config();
 const app = express();
@@ -47,6 +47,9 @@ connectDB();
 app.get("/", (req, res) => {
   res.send("This is Quackseat API!");
 });
+
+
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Express is listening at http://localhost:${port}`);
