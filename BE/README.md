@@ -169,3 +169,78 @@ I use an **atomic approach** for database operations: either all changes succeed
 > ```
 
 This ensures data consistency and integrity, especially for multi-step operations.
+
+---
+
+## 🧩 Request Validation with Zod (DTO-like)
+
+To ensure robust and type-safe validation of incoming requests, this project uses [Zod](https://zod.dev/) schemas. Zod acts as a runtime validator and can serve as a replacement for traditional DTOs (Data Transfer Objects) found in frameworks like Java Spring or NestJS.
+
+**Example: User DTO Validation with Zod**
+
+```ts
+// src/types/dtos/user.dto.ts
+import { UserRoleEnum } from '../enums';
+import { z } from 'zod';
+
+export const CreateUserSchema = z.object({
+  name: z
+    .string()
+    .min(3, "Name must be at least 3 characters long")
+    .max(50, "Name must be less than 50 characters")
+    .regex(/^[a-zA-Z\s'-]+$/, "Name can only contain letters, spaces, hyphens, and apostrophes"),
+  email: z
+    .string()
+    .email("Please enter a valid email address"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters long")
+    .max(32, "Password must be less than 32 characters")
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+    ),
+  role: z.literal(UserRoleEnum.USER),
+});
+```
+
+---
+
+## 🏷️ Experimental Decorators (Inspired by Java Spring & NestJS)
+
+Inspired by technologies I use in university and industry—such as **Java Spring** (where they're called "annotations") and **NestJS** (where they're called "decorators")—I decided to experiment with TypeScript's.
+
+**Example: Database Error Handling Decorator**
+
+```ts
+import { DatabaseError } from "@/utils/error/DatabaseError";
+
+export function WrapDatabaseError(
+  target: any,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
+) {
+  const originalMethod = descriptor.value;
+  descriptor.value = async function (...args: any[]) {
+    try {
+      return await originalMethod.apply(this, args);
+    } catch (error: any) {
+      throw new DatabaseError(error);
+    }
+  };
+  return descriptor;
+}
+```
+
+Use this decorator on repository methods to automatically catch and wrap any thrown errors:
+
+```ts
+class UserRepository {
+  @WrapDatabaseError
+  async createUser(data: CreateUserDto) {
+    // ... database logic ...
+  }
+}
+```
+
+> **Reference:** [TypeScript Decorators Handbook](https://www.typescriptlang.org/docs/handbook/decorators.html)
