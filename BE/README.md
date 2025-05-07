@@ -152,6 +152,54 @@ This pattern allows all repositories to inherit common logic, reducing duplicati
 
 ---
 
+### Singleton Pattern in Services & Repositories & Controllers
+
+To ensure single instances of services, repositories and controllers throughout the application lifecycle, I implement the **Singleton pattern**. This approach:
+- Maintains consistent state
+- Reduces memory usage
+- Prevents multiple database connections
+- Ensures proper dependency management
+
+**Example: Repository Singleton Implementation**
+```ts
+export class UserRepository extends BaseRepository<IUser> {
+    private static userRepository: UserRepository;
+
+    private constructor() {
+        super(User);
+    }
+
+    static getInstance() {
+        if (!UserRepository.userRepository) {
+            UserRepository.userRepository = new UserRepository();
+        }
+        return UserRepository.userRepository;
+    }
+}
+```
+
+**Example: Service Singleton Implementation**
+```ts
+export class UserService {
+    private static userService: UserService;
+
+    static getInstance() {
+        if (!UserService.userService) {
+            UserService.userService = new UserService();
+        }
+        return UserService.userService;
+    }
+}
+```
+
+This pattern ensures that:
+1. Only one instance of each service/repository/controller exists
+2. The instance is created lazily (only when first needed)
+3. All subsequent requests get the same instance
+4. Dependencies are properly managed across the application
+
+---
+
 ### Atomic Operations with Transactions
 
 I use an **atomic approach** for database operations: either all changes succeed, or none are applied. This is achieved by wrapping requests in a MongoDB transaction using a middleware.
@@ -183,7 +231,7 @@ To ensure robust and type-safe validation of incoming requests, this project use
 import { UserRoleEnum } from '../enums';
 import { z } from 'zod';
 
-export const CreateUserDto = z.object({
+export const CreateUserZod = z.object({
   name: z
     .string()
     .min(3, "Name must be at least 3 characters long")
@@ -202,6 +250,8 @@ export const CreateUserDto = z.object({
     ),
   role: z.literal(UserRoleEnum.USER),
 });
+
+export type CreateUserDto = z.infer<typeof CreateUserZod>;
 ```
 
 ---

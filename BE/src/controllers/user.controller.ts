@@ -7,10 +7,6 @@ export class UserController {
 
     private static userController: UserController;
 
-    private constructor() {
-
-    }
-
     static getInstance() {
         if (!UserController.userController) {
             UserController.userController = new UserController();
