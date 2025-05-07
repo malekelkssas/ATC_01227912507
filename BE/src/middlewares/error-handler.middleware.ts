@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { IErrorResponse } from '@/types';
 import { ERROR_MESSAGES, HTTP_STATUS_CODE, 
-    AppError, DatabaseError, handleMongooseError, 
+    AppError, DatabaseError, 
     NotFoundError, ValidationError,
     handleZodError,
     NodeEnv
@@ -14,19 +14,31 @@ export const errorHandler = (err: Error, _req: Request, res: Response, _next: Ne
         message: err.message || ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
     };
 
+    // TODO: rollback the transaction
+    // TODO: and dont forget to commit the transaction if it is successful
+
     if (err instanceof ZodError) {
         response = handleZodError(err);
     } else if (err instanceof DatabaseError) {
-        response = handleMongooseError(err);
+        response = {
+            statusCode: HTTP_STATUS_CODE.BAD_REQUEST,
+            message: err.message,
+        };
     } else if (err instanceof ValidationError) {
-        response.message = Object.values(err.errors)[0];
-        response.statusCode = HTTP_STATUS_CODE.BAD_REQUEST;
+        response = {
+            statusCode: HTTP_STATUS_CODE.BAD_REQUEST,
+            message: Object.values(err.errors)[0],
+        };
     } else if (err instanceof NotFoundError) {
-        response.message = err.message;
-        response.statusCode = HTTP_STATUS_CODE.NOT_FOUND;
+        response = {
+            statusCode: HTTP_STATUS_CODE.NOT_FOUND,
+            message: err.message,
+        };
     } else if (err instanceof AppError) {
-        response.message = err.message;
-        response.statusCode = err.statusCode;
+        response = {
+            statusCode: err.statusCode,
+            message: err.message,
+        };
     }
 
     if(config.nodeEnv === NodeEnv.DEVELOPMENT) {

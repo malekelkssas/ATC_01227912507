@@ -7,13 +7,13 @@ export const UserSchema = new Schema<IUser>(
   {
     name: {
       type: String,
-      required: true,
+      required: [true, "Name is required"],
       minlength: [3, "Name must be at least 3 characters long"],
       maxlength: [50, "Name must be less than 50 characters"],
     },
     email: {
       type: String,
-      required: true,
+      required: [true, "Email is required"],
       unique: [true, "Email already exists"],
       match: [
         /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
@@ -22,13 +22,16 @@ export const UserSchema = new Schema<IUser>(
     },
     password: {
       type: String,
-      required: true,
+      required: [true, "Password is required"],
     },
     role: {
       type: String,
-      enum: Object.values(UserRoleEnum),
+      enum: {
+        values: Object.values(UserRoleEnum),
+        message: "Invalid role",
+      },
       default: UserRoleEnum.USER,
-      required: true,
+      required: [true, "Role is required"],
     },
   },
   {
