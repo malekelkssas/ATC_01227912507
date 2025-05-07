@@ -4,7 +4,7 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import mongoSanitize from 'express-mongo-sanitize';
-import { HttpMethod, NodeEnv, ROUTES } from "./utils";
+import { HttpMethod, NODE_ENV, ROUTES } from "@/utils";
 import rateLimit from "express-rate-limit";
 import { connectDB } from "./config";
 import { errorHandler, transactionMiddleware } from "./middlewares";
@@ -13,7 +13,7 @@ import { userRouter } from "./routes";
 dotenv.config();
 const app = express();
 
-if (process.env.NODE_ENV === NodeEnv.DEVELOPMENT) {
+if (process.env.NODE_ENV === NODE_ENV.DEVELOPMENT) {
   app.use(morgan("dev"));
 }
 
@@ -78,3 +78,5 @@ app.use(errorHandler);
 app.listen(port, () => {
   console.log(`Express is listening at http://localhost:${port}`);
 });
+
+export { app };

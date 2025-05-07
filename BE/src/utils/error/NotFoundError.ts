@@ -1,5 +1,5 @@
 import { AppError } from './AppError.js';
-import { HTTP_STATUS_CODE } from '../constants/http-status-code.constants.js';
+import { HTTP_STATUS_CODE } from '@/utils';
 
 export class NotFoundError extends AppError {
   constructor(message: string) {

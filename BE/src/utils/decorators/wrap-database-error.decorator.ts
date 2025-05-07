@@ -1,4 +1,4 @@
-import { DatabaseError } from "@/utils/error/DatabaseError";
+import { DatabaseError } from "@/utils";
 
 /**
  * REF: https://www.typescriptlang.org/docs/handbook/decorators.html

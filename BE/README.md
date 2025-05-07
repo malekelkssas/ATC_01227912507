@@ -263,7 +263,7 @@ Inspired by technologies I use in university and industry—such as **Java Sprin
 **Example: Database Error Handling Decorator**
 
 ```ts
-import { DatabaseError } from "@/utils/error/DatabaseError";
+import { DatabaseError } from "@/utils";
 
 export function WrapDatabaseError(
   target: any,

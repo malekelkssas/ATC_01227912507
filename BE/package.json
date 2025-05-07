@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "main": "dist/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "node --experimental-loader ./loader.js dist/index.js",
     "dev": "cross-env NODE_NO_WARNINGS=1 tsx watch src/index.ts",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "jest --config jest.config.ts --forceExit",
+    "test:watch": "jest --watch --config jest.config.ts"
   },
   "keywords": [],
   "author": "Malek M. Elkssas",
@@ -28,6 +29,7 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.7.0",
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
