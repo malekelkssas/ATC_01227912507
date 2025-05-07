@@ -64,7 +64,9 @@ const limiter = rateLimit({
 app.use(limiter);
 app.use(transactionMiddleware);
 
-connectDB();
+if (process.env.NODE_ENV !== NODE_ENV.TEST) {
+    connectDB();
+}
 
 app.use(`/${ROUTES.BASE}/${ROUTES.USER}`, userRouter);
 
