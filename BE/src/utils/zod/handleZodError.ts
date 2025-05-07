@@ -1,16 +1,17 @@
 import { ZodError } from 'zod';
-import { ValidationError } from '@/utils';
+import { HTTP_STATUS_CODE } from '@/utils';
+import { IErrorResponse } from "@/types";
 
-export function handleZodError(error: unknown): never {
+export function handleZodError(error: any): IErrorResponse {
+  const response: IErrorResponse = {
+    statusCode: HTTP_STATUS_CODE.BAD_REQUEST,
+    message: error.message,
+  };
   if (error instanceof ZodError) {
-    const firstError = error.errors[0];
+    const zodError = error as ZodError;
+    const firstError = zodError.errors[0];
     const field = firstError.path.join('.');
-    throw new ValidationError(
-      `Validation failed for field: ${field}. Reason: ${firstError.message}`,
-      {
-        [field]: firstError.message,
-      }
-    );
+    response.message = `Validation failed for field: ${field}. Reason: ${firstError.message}`;
   }
-  throw error;
+  return response;
 }

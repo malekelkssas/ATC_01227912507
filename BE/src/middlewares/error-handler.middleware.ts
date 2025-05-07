@@ -3,9 +3,11 @@ import { IErrorResponse } from '@/types';
 import { ERROR_MESSAGES, HTTP_STATUS_CODE, 
     AppError, DatabaseError, handleMongooseError, 
     NotFoundError, ValidationError,
-    handleZodError
+    handleZodError,
+    NodeEnv
  } from '@/utils';
  import { ZodError } from 'zod';
+import { config } from '@/config';
 export const errorHandler = (err: Error, _req: Request, res: Response, _next: NextFunction) => {
     let response: IErrorResponse = {
         statusCode: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
@@ -27,5 +29,11 @@ export const errorHandler = (err: Error, _req: Request, res: Response, _next: Ne
         response.statusCode = err.statusCode;
     }
 
-    res.status(response.statusCode).json(response.message);
+    if(config.nodeEnv === NodeEnv.DEVELOPMENT) {
+        console.error(err);
+    }
+
+    res.status(response.statusCode).json({
+        message: response.message,
+    });
 }

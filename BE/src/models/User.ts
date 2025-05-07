@@ -44,10 +44,4 @@ UserSchema.pre(MongooseHooksEnum.SAVE, async function (next) {
   next();
 });
 
-UserSchema.methods.comparePassword = async function (
-  candidatePassword: string
-): Promise<boolean> {
-  return bcrypt.compare(candidatePassword, this.password);
-};
-
 export const User = model<IUser>(USER_SCHEMA_NAME, UserSchema);

@@ -2,15 +2,20 @@ export const ROUTES = {
     /**
      * Base Routes
      */
-    BASE: "/api",
+    BASE: "api",
+
+    /**
+     * Health Check Routes
+     */
+    HEALTH_CHECK: "health-check",
 
     /**
      * User Routes
      */
-    USER: "/user",
-    SIGN_IN: "/sign-in",
-    SIGN_UP: "/sign-up",
-    REFRESH_TOKEN: "/refresh-token",
-    LOGOUT: "/logout",
+    USER: "users",
+    SIGN_IN: "sign-in",
+    SIGN_UP: "sign-up",
+    REFRESH_TOKEN: "refresh-token",
+    LOGOUT: "logout",
 
 }

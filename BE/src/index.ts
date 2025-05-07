@@ -3,11 +3,12 @@ import dotenv from "dotenv";
 import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
-import mongoSanitize from "express-mongo-sanitize";
-import { HttpMethod, NodeEnv } from "./utils";
+import mongoSanitize from 'express-mongo-sanitize';
+import { HttpMethod, NodeEnv, ROUTES } from "./utils";
 import rateLimit from "express-rate-limit";
 import { connectDB } from "./config";
 import { errorHandler, transactionMiddleware } from "./middlewares";
+import { userRouter } from "./routes";
 
 dotenv.config();
 const app = express();
@@ -18,6 +19,9 @@ if (process.env.NODE_ENV === NodeEnv.DEVELOPMENT) {
 
 const port = process.env.PORT || 3000;
 
+app.use(express.json({ limit: "10kb" }));
+
+app.use(helmet());
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN?.split(","),
@@ -31,9 +35,27 @@ app.use(
     credentials: true,
   })
 );
-app.use(helmet());
-app.use(express.json({ limit: "10kb" }));
-app.use(mongoSanitize());
+
+/**
+ * @Error: express-mongo-sanitize is not working with query params -> TypeError: Cannot set property query of #<IncomingMessage> which has only a getter
+ * @Solution: is to use this custom middleware to make the query property writable
+ * REF: https://stackoverflow.com/questions/79597051/express-v5-is-there-any-way-to-modify-req-query
+ */
+app.use((req, _, next) => {
+  Object.defineProperty(req, 'query', 
+    { ...Object.getOwnPropertyDescriptor(req, 'query'), 
+      value: req.query, writable: true });
+  next();
+});
+
+app.use(mongoSanitize({
+  allowDots: true,
+  replaceWith: "_",
+  onSanitize: ({ req, key }) => {
+    console.warn(`This request[${key}] is sanitized`, req);
+  },
+}));
+
 const limiter = rateLimit({
   max: 300,
   windowMs: 60 * 1000, // 1 minute
@@ -44,8 +66,10 @@ app.use(transactionMiddleware);
 
 connectDB();
 
-app.get("/", (req, res) => {
-  res.send("This is Quackseat API!");
+app.use(`/${ROUTES.BASE}/${ROUTES.USER}`, userRouter);
+
+app.get(`/${ROUTES.BASE}/${ROUTES.HEALTH_CHECK}`, (_, res) => {
+  res.send("Quack 100% good!");
 });
 
 
