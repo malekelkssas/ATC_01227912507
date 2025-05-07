@@ -1,4 +1,4 @@
-import { AppError } from './AppError.js';
+import { AppError } from './AppError';
 import { HTTP_STATUS_CODE, MONGOOSE_ERRORS } from '@/utils';
 
 export class DatabaseError extends AppError {

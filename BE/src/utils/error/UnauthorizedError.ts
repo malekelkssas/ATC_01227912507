@@ -1,4 +1,4 @@
-import { AppError } from './AppError.js';
+import { AppError } from './AppError';
 import { HTTP_STATUS_CODE } from '@/utils';
 
 export class UnauthorizedError extends AppError {

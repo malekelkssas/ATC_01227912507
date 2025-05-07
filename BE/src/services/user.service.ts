@@ -17,7 +17,7 @@ export class UserService {
     signIn = async (data: SignInDto) => {
         const user = await userRepository.getUserByEmailWithPassword(data.email);
         if (!user) {
-            throw new NotFoundError("User not found");
+            throw new UnauthorizedError("Invalid email");
         }
 
         const isPasswordValid = await bcrypt.compare(data.password, user.password);

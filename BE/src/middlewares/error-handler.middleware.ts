@@ -4,7 +4,7 @@ import { ERROR_MESSAGES, HTTP_STATUS_CODE,
     AppError, DatabaseError, 
     NotFoundError, ValidationError,
     handleZodError,
-    NodeEnv
+    NODE_ENV
  } from '@/utils';
  import { ZodError } from 'zod';
 import { config } from '@/config';
@@ -41,7 +41,7 @@ export const errorHandler = (err: Error, _req: Request, res: Response, _next: Ne
         };
     }
 
-    if(config.nodeEnv === NodeEnv.DEVELOPMENT) {
+    if(config.nodeEnv === NODE_ENV.DEVELOPMENT) {
         console.error(err);
     }
 
