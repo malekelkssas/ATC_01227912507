@@ -294,3 +294,132 @@ class UserRepository {
 ```
 
 > **Reference:** [TypeScript Decorators Handbook](https://www.typescriptlang.org/docs/handbook/decorators.html)
+
+---
+
+## 🧪 Testing
+
+The backend implements a robust testing strategy using Jest and Supertest for API testing. The tests are designed to be isolated, repeatable, and maintainable.
+
+### Test Structure
+
+```
+tests/
+├── fixtures/     # Test data fixtures
+├── integration/  # API integration tests
+├── seeds/        # Database seeding utilities
+└── setup.ts      # Global test configuration
+```
+
+### Test Environment
+
+Tests run in an isolated environment using:
+- **In-Memory MongoDB**: Using `mongodb-memory-server` to create a temporary database
+- **Test Data Seeding**: Pre-populated test data for consistent test scenarios
+- **Environment Isolation**: Tests run with `NODE_ENV=test` to prevent affecting production data
+
+### Testing Approach
+
+#### AAA Pattern (Arrange-Act-Assert)
+
+All tests follow the AAA pattern for clear structure and readability:
+
+```typescript
+describe('Auth APIs', () => {
+    it('should login a user successfully', async () => {
+        // Arrange
+        const signInDto: SignInDto = {
+            email: UserFixture.userData.email!,
+            password: UserFixture.userData.password!
+        };
+
+        // Act
+        const response = await request(app)
+            .post(loginRoute)
+            .send(signInDto);
+        const signInResponse: SignInResponseDto = response.body;
+
+        // Assert
+        expect(response.status).toBe(HTTP_STATUS_CODE.OK);
+        expect(signInResponse.user).toBeDefined();
+        expect(signInResponse.token).toBeDefined();
+    });
+});
+```
+
+### Test Setup
+
+The test environment is configured in `setup.ts`:
+
+```typescript
+beforeAll(async () => {
+    // Disconnect from any existing connections
+    if (mongoose.connection.readyState !== 0) {
+        await mongoose.disconnect();
+    }
+    
+    // Create in-memory MongoDB instance
+    mongod = await MongoMemoryServer.create();
+    const uri = mongod.getUri();
+    await mongoose.connect(uri);
+});
+
+beforeEach(async () => {
+    // Clear all collections before each test
+    const collections = mongoose.connection.collections;
+    for (const key in collections) {
+        await collections[key].deleteMany({});
+    }
+
+    // Seed fresh test data
+    await setupTestData();
+});
+```
+
+### Test Data Seeding
+
+Test data is managed through a seeding system:
+
+```typescript
+// tests/seeds/data/user.seed.ts
+export const seedUsers = async () => {
+    try {
+        await Promise.all([
+            new User(UserFixture.userData).save(),
+            new User(UserFixture.userData2).save(),
+            new User(UserFixture.adminData).save()
+        ]);
+    } catch (error) {
+        console.error("Error seeding users:", error);
+        throw error;
+    }
+}
+```
+
+### Integration Testing
+
+The project focuses on API-level integration testing, ensuring that:
+- HTTP endpoints work as expected
+- Request/response cycles are properly handled
+- Authentication flows are secure
+- Error cases are properly managed
+- Data validation works end-to-end
+
+### Running Tests
+
+```bash
+# Run all tests
+npm run test
+
+# Run tests in watch mode
+npm run test:watch
+```
+
+### Test Coverage
+
+The project maintains high test coverage with:
+- Comprehensive API endpoint testing
+- Authentication flow validation
+- Error case handling
+- Input validation testing
+- Edge case coverage
