@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 40 45% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 40 45% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 40 45% 15%;
+
+    --primary: 47 100% 64%;
+    --primary-foreground: 40 45% 15%;
+
+    --secondary: 195 53% 79%;
+    --secondary-foreground: 40 45% 15%;
+
+    --muted: 60 10% 96%;
+    --muted-foreground: 40 5% 40%;
+
+    --accent: 120 60% 75%;
+    --accent-foreground: 40 45% 15%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 20 10% 90%;
+    --input: 20 10% 90%;
+    --ring: 47 100% 64%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 5%;
+    --foreground: 47 100% 64%;
+
+    --card: 0 0% 10%;
+    --card-foreground: 47 100% 64%;
+
+    --popover: 0 0% 10%;
+    --popover-foreground: 47 100% 64%;
+
+    --primary: 47 100% 64%;
+    --primary-foreground: 40 45% 15%;
+
+    --secondary: 195 53% 30%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 0 0% 20%;
+    --muted-foreground: 47 20% 80%;
+
+    --accent: 120 30% 30%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 47 100% 64%;
+  }
+
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    @apply scroll-smooth;
+  }
+  
+  body {
+    @apply bg-background text-foreground transition-colors duration-300;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] .rtl-flip {
+    transform: scaleX(-1);
+  }
+  
+  [dir="rtl"] .rtl-mirror {
+    @apply ml-0 mr-auto;
+  }
+  
+  [dir="ltr"] .rtl-mirror {
+    @apply ml-auto mr-0;
+  }
+}
+
+@layer components {
+  .duck-button {
+    @apply bg-duck-yellow hover:bg-duck-yellow/80 text-duck-brown font-medium rounded-full px-4 py-2 transition-all;
+  }
+  
+  .duck-card {
+    @apply bg-white dark:bg-[#111] rounded-2xl shadow-md border border-duck-yellow/20 overflow-hidden transition-all;
+  }
+}
