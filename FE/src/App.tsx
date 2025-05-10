@@ -5,6 +5,11 @@ import { ThemeProvider } from '@/context';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Route, Routes } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import NotFound from './pages/NotFound';
+import { PagesRoutesConstants } from '@/utils/constants';
 
 function App() {
   return (
@@ -13,9 +18,12 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <div>
-            <h1>Hello World</h1>
-          </div>
+          <BrowserRouter>
+            <Routes>
+              <Route path={PagesRoutesConstants.SIGN_IN} element={<LoginPage />} />
+              <Route path={PagesRoutesConstants.NOT_FOUND} element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
         </TooltipProvider>
       </ThemeProvider>
     </Provider>
