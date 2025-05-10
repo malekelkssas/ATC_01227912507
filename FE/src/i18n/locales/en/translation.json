@@ -12,9 +12,12 @@
   },
   "auth": {
     "login": "Login",
-    "signup": "Sign Up"
+    "signup": "Sign Up",
+    "password": "Password",
+    "email": "Email"
   },
   "common": {
+    "loading": "Loading...",
     "buttons": {
       "submit": "Submit",
       "cancel": "Cancel",

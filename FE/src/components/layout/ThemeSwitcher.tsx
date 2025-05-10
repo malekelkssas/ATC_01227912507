@@ -1,18 +1,16 @@
 import React from 'react';
-import { useTheme } from 'next-themes';
+// import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { Moon, Sun } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { TranslationConstants } from '@/utils/constants';
 import { THEME } from '@/types/theme';
+import { useTheme } from '@/context';
 
 const ThemeSwitcher: React.FC = () => {
-  const { theme, setTheme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
   const { t } = useTranslation();
 
-  const toggleTheme = () => {
-    setTheme(theme === THEME.DARK ? THEME.LIGHT : THEME.DARK);
-  };
 
   return (
     <Button

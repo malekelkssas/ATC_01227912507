@@ -9,7 +9,7 @@ import authSlice from "./slices/authSlice";
 const rootReducer = combineReducers({
     theme: themeSlice,
     auth: authSlice,
-  });
+});
 
 const persistConfig = {
     key: "root",
@@ -22,8 +22,8 @@ const persistConfig = {
           },
         }),
       ],
-  };
-  
+};
+
 const persistedReducer = persistReducer(persistConfig, rootReducer as unknown as Reducer);
 
 export const store = configureStore({
@@ -35,6 +35,5 @@ export const store = configureStore({
 
 export const persistor = persistStore(store);
 
-export type RootState = ReturnType<typeof store.getState>;
-  
+export type RootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = typeof store.dispatch;

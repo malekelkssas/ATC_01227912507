@@ -7,6 +7,8 @@ export class TranslationConstants {
   static readonly AUTH = {
     LOGIN: 'auth.login',
     SIGNUP: 'auth.signup',
+    PASSWORD: 'auth.password',
+    EMAIL: 'auth.email',
   } as const;
 
   static readonly NAV = {
@@ -18,6 +20,7 @@ export class TranslationConstants {
   } as const;
 
   static readonly COMMON = {
+    LOADING: 'common.loading',
     BUTTONS: {
       SUBMIT: 'common.buttons.submit',
       CANCEL: 'common.buttons.cancel',
