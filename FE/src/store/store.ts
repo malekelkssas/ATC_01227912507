@@ -4,10 +4,11 @@ import { encryptTransform } from 'redux-persist-transform-encrypt';
 import { storage } from "@/utils/localStorage";
 import { combineReducers, type Reducer } from "redux";
 import themeSlice  from "./slices/themeSlice";
-
+import authSlice from "./slices/authSlice";
 
 const rootReducer = combineReducers({
     theme: themeSlice,
+    auth: authSlice,
   });
 
 const persistConfig = {
