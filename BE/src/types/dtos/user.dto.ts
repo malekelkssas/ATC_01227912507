@@ -57,3 +57,22 @@ export const SignInResponseZod = z.object({
 });
 
 export type SignInResponseDto = z.infer<typeof SignInResponseZod>;
+
+// get user
+export const GetUserResponseZod = z.object({
+  user: z.object({
+    id: z.string(),
+    name: z.string(),
+    email: z.string(),
+    role: z.nativeEnum(UserRoleEnum),
+  }),
+});
+
+export type GetUserResponseDto = z.infer<typeof GetUserResponseZod>;
+
+// refresh token
+export const RefreshTokenResponseZod = z.object({
+  refreshToken: z.string(),
+});
+
+export type RefreshTokenResponseDto = z.infer<typeof RefreshTokenResponseZod>;

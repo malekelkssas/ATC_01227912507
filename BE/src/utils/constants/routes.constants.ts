@@ -16,6 +16,6 @@ export const ROUTES = {
     SIGN_IN: "sign-in",
     SIGN_UP: "sign-up",
     REFRESH_TOKEN: "refresh-token",
-    LOGOUT: "logout",
+    ME: "me",
 
 }
