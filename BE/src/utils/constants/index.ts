@@ -6,3 +6,4 @@ export * from './error-messages.constants';
 export * from './user.constants';
 export * from './routes.constants';
 export * from './jwt.constants';
+export * from './tag.constants';

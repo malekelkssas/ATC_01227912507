@@ -3,3 +3,4 @@ export * from './IRead';
 export * from './IErrorResponse';
 export * from './Iuser';
 export * from './IJwtUser';
+export * from './Itag';

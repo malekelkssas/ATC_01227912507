@@ -18,4 +18,14 @@ export const ROUTES = {
     REFRESH_TOKEN: "refresh-token",
     ME: "me",
 
+    /**
+     * Tag Routes
+     */
+    TAGS: "tags",
+
+    /**
+     * Shared
+     */
+    ID: ":id",
+
 }
