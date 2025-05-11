@@ -22,11 +22,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="flex space-x-6 rtl:space-x-reverse">
               <a href="https://www.linkedin.com/in/malek-elkssas-003846227/" className="text-gray-600 dark:text-gray-400 hover:text-duck-yellow group">
                 <span className="sr-only">LinkedIn</span>
-                <img src="/linkedin-svgrepo-com.svg" alt="LinkedIn" className="h-6 w-6 group-hover:[filter:brightness(0)_saturate(100%)_invert(85%)_sepia(30%)_saturate(1000%)_hue-rotate(358deg)_brightness(103%)_contrast(103%)]" />
+                <img src="/linkedin-svgrepo-com.svg" alt="LinkedIn" className="h-6 w-6 group-hover:[filter:brightness(0)_saturate(100%)_invert(85%)_sepia(30%)_saturate(1000%)_hue-rotate(358deg)_brightness(103%)_contrast(103%)] dark:[filter:brightness(0)_saturate(100%)_invert(100%)_sepia(0%)_saturate(0%)_hue-rotate(0deg)_brightness(100%)_contrast(100%)]" />
               </a>
               <a href="https://www.upwork.com/freelancers/~015acda9682670c3cc" className="text-gray-600 dark:text-gray-400 hover:text-duck-yellow group">
                 <span className="sr-only">Upwork</span>
-                <img src="/upwork-svgrepo-com.svg" alt="Upwork" className="h-6 w-6 group-hover:[filter:brightness(0)_saturate(100%)_invert(85%)_sepia(30%)_saturate(1000%)_hue-rotate(358deg)_brightness(103%)_contrast(103%)]" />
+                <img src="/upwork-svgrepo-com.svg" alt="Upwork" className="h-6 w-6 group-hover:[filter:brightness(0)_saturate(100%)_invert(85%)_sepia(30%)_saturate(1000%)_hue-rotate(358deg)_brightness(103%)_contrast(103%)] dark:[filter:brightness(0)_saturate(100%)_invert(100%)_sepia(0%)_saturate(0%)_hue-rotate(0deg)_brightness(100%)_contrast(100%)]" />
               </a>
             </div>
           </div>

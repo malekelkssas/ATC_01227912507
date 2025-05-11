@@ -9,6 +9,6 @@ export const config = {
   nodeEnv: process.env.NODE_ENV || NODE_ENV.DEVELOPMENT,
   jwtSecret: process.env.JWT_SECRET || 'The Quack is the best',
   jwtExpiration: process.env.JWT_EXPIRATION || '1h',
-  jwtRefreshExpiration: process.env.JWT_REFRESH_EXPIRATION || '7d',
+  jwtRefreshExpiration: process.env.JWT_REFRESH_EXPIRATION || '1d',
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET || 'The Quack is the best',
 };

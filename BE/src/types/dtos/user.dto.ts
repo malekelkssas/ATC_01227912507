@@ -72,7 +72,7 @@ export type GetUserResponseDto = z.infer<typeof GetUserResponseZod>;
 
 // refresh token
 export const RefreshTokenResponseZod = z.object({
-  refreshToken: z.string(),
+  token: z.string(),
 });
 
 export type RefreshTokenResponseDto = z.infer<typeof RefreshTokenResponseZod>;

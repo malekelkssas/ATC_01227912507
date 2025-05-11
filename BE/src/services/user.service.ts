@@ -61,19 +61,18 @@ export class UserService {
         } as GetUserResponseDto;
     }
 
-    refreshToken = async (token: string): Promise<RefreshTokenResponseDto> => {
-        const { id: userId } = jwt.verify(token, config.jwtRefreshSecret) as Partial<IJwtUser>;
+    refreshToken = async (refreshToken: string): Promise<RefreshTokenResponseDto> => {
+        const { id: userId } = jwt.verify(refreshToken, config.jwtRefreshSecret) as Partial<IJwtUser>;
         if (!userId) {
             throw new UnauthorizedError("Invalid token");
         }
-        
         const user = await userRepository.findById(userId);
         if (!user) {
             throw new UnauthorizedError("User not found");
         }
-        const refreshToken = generateRefreshToken(user._id);
+        const token = generateToken({ id: user._id, email: user.email, name: user.name, role: user.role });
         return {
-            refreshToken,
+            token,
         } as RefreshTokenResponseDto;
     }
 }
