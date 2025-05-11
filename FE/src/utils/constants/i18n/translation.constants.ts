@@ -9,6 +9,8 @@ export class TranslationConstants {
     SIGNUP: 'auth.signup',
     PASSWORD: 'auth.password',
     EMAIL: 'auth.email',
+    LOGIN_SUCCESS: 'auth.login_success',
+    LOGIN_FAILED: 'auth.login_failed',
   } as const;
 
   static readonly NAV = {
@@ -29,6 +31,27 @@ export class TranslationConstants {
     MESSAGES: {
       SUCCESS: 'common.messages.success',
       ERROR: 'common.messages.error',
+    },
+  } as const;
+
+  static readonly VALIDATION = {
+    REQUIRED: {
+      EMAIL: 'validation.required.email',
+      PASSWORD: 'validation.required.password',
+      NAME: 'validation.required.name',
+    },
+    EMAIL: {
+      INVALID: 'validation.email.invalid',
+      WRONG: 'validation.email.wrong',
+    },
+    PASSWORD: {
+      MIN: 'validation.password.min',
+      MAX: 'validation.password.max',
+      WRONG: 'validation.password.wrong',
+    },
+    NAME: {
+      MIN: 'validation.name.min',
+      MAX: 'validation.name.max',
     },
   } as const;
 } 

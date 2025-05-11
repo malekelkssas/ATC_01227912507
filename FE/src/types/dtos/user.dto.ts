@@ -1,25 +1,26 @@
 import { z } from 'zod';
 import { UserRoleEnum } from '@/types/enums';
+import { TranslationConstants } from '@/utils/constants';
 
 // Create User DTOs
 export const CreateUserZod = z.object({
   name: z
     .string({
-      required_error: "Name is required",
+      required_error: TranslationConstants.VALIDATION.REQUIRED.NAME,
     })
-    .min(3, "Name must be at least 3 characters long")
-    .max(50, "Name must be less than 50 characters"),
+    .min(3, TranslationConstants.VALIDATION.NAME.MIN)
+    .max(50, TranslationConstants.VALIDATION.NAME.MAX),
   email: z
     .string({
-      required_error: "Email is required",
+      required_error: TranslationConstants.VALIDATION.REQUIRED.EMAIL,
     })
-    .email("Please enter a valid email address"),
+    .email(TranslationConstants.VALIDATION.EMAIL.INVALID),
   password: z
     .string({
-      required_error: "Password is required",
+      required_error: TranslationConstants.VALIDATION.REQUIRED.PASSWORD,
     })
-    .min(8, "Password must be at least 8 characters long")
-    .max(32, "Password must be less than 32 characters"),
+    .min(8, TranslationConstants.VALIDATION.PASSWORD.MIN)
+    .max(32, TranslationConstants.VALIDATION.PASSWORD.MAX),
   role: z.literal(UserRoleEnum.USER).default(UserRoleEnum.USER),
 });
 
@@ -33,12 +34,17 @@ export type CreateUserResponseDto = z.infer<typeof CreateUserResponseZod>;
 
 // Sign In DTOs
 export const SignInZod = z.object({
-  email: z.string({
-    required_error: "Email is required",
-  }).email("Wrong email"),
-  password: z.string({
-    required_error: "Password is required",
-  }).min(8, "Wrong password").max(32, "Wrong password"),
+  email: z
+    .string({
+      required_error: TranslationConstants.VALIDATION.REQUIRED.EMAIL,
+    })
+    .email(TranslationConstants.VALIDATION.EMAIL.WRONG),
+  password: z
+    .string({
+      required_error: TranslationConstants.VALIDATION.REQUIRED.PASSWORD,
+    })
+    .min(8, TranslationConstants.VALIDATION.PASSWORD.WRONG)
+    .max(32, TranslationConstants.VALIDATION.PASSWORD.WRONG),
 }).required();
 
 export type SignInDto = z.infer<typeof SignInZod>;
@@ -70,7 +76,7 @@ export type GetUserResponseDto = z.infer<typeof GetUserResponseZod>;
 
 // refresh token
 export const RefreshTokenResponseZod = z.object({
-  refreshToken: z.string(),
+  token: z.string(),
 });
 
 export type RefreshTokenResponseDto = z.infer<typeof RefreshTokenResponseZod>;

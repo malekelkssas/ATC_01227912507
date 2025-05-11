@@ -101,3 +101,18 @@
     @apply bg-white dark:bg-[#111] rounded-2xl shadow-md border border-duck-yellow/20 overflow-hidden transition-all;
   }
 }
+
+@layer utilities {
+  .animate-progress {
+    animation: progress 3s linear forwards;
+  }
+}
+
+@keyframes progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}

@@ -1,21 +1,28 @@
 import axios from "axios";
 import { store, type RootState } from "@/store";
 import { logout } from "@/utils/auth/logout";
-import { setRefreshToken } from "@/store/slices";
+import { setToken } from "@/store/slices";
 import { BeRoutesConstants, PagesRoutesConstants } from "@/utils/constants";
 import { UserService } from "./services";
+import type { RefreshTokenResponseDto } from "@/types";
 
-const publicEndpoints = [BeRoutesConstants.SIGN_IN, BeRoutesConstants.SIGN_UP, BeRoutesConstants.REFRESH_TOKEN];
+const publicEndpoints = [
+  `/${BeRoutesConstants.USERS}/${BeRoutesConstants.SIGN_IN}`,
+  `/${BeRoutesConstants.USERS}/${BeRoutesConstants.SIGN_UP}`,
+];
+const refreshTokenEndpoint = `/${BeRoutesConstants.USERS}/${BeRoutesConstants.REFRESH_TOKEN}`;
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  validateStatus: () => true,
+  baseURL: import.meta.env.VITE_API_URL
 });
 
 api.interceptors.request.use(
   (config) => {
     // Skip token check for public endpoints
-    if (publicEndpoints.includes(config.url || "")) {
+    if (
+      publicEndpoints.includes(config.url || "") ||
+      config.url === refreshTokenEndpoint
+    ) {
       return config;
     }
 
@@ -50,7 +57,10 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     // Skip refresh token logic for public endpoints
-    if (publicEndpoints.includes(originalRequest.url || "")) {
+    if (
+      originalRequest &&
+      publicEndpoints.includes(originalRequest.url || "")
+    ) {
       return Promise.reject(error);
     }
     const state: RootState = store.getState();
@@ -65,15 +75,14 @@ api.interceptors.response.use(
         if (!refreshToken) {
           throw new Error("No refresh token available");
         }
-        // add the refresh token to the original request
-        originalRequest.headers.Authorization = `Bearer ${refreshToken}`;
 
-        const response = await UserService.refreshToken();
+        const response = await UserService.refreshToken(refreshToken);
+        const data = response as RefreshTokenResponseDto;
 
-        const { refreshToken: newRefreshToken } = response;
+        const { token: newToken } = data;
 
         // Update token in Redux store
-        store.dispatch(setRefreshToken(newRefreshToken));
+        store.dispatch(setToken(newToken));
 
         // Retry original request with new token
         // originalRequest.headers.Authorization = `Bearer ${token}`;
@@ -86,7 +95,7 @@ api.interceptors.response.use(
     }
 
     if (error.response?.status === 403) {
-      window.location.href = PagesRoutesConstants.DASHBOARD;
+      window.location.href = PagesRoutesConstants.EVENTS;
       return Promise.reject(error);
     }
 

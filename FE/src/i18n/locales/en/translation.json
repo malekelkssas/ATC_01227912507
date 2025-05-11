@@ -1,7 +1,7 @@
 {
   "app": {
     "welcome": "Hello, world!",
-    "title": "Duck Events"
+    "title": "QuackSeats"
   },
   "nav": {
     "home": "Home",
@@ -14,7 +14,9 @@
     "login": "Login",
     "signup": "Sign Up",
     "password": "Password",
-    "email": "Email"
+    "email": "Email",
+    "login_success": "Welcome back!",
+    "login_failed": "Invalid email or password"
   },
   "common": {
     "loading": "Loading...",
@@ -26,6 +28,26 @@
     "messages": {
       "success": "Success!",
       "error": "Error!"
+    }
+  },
+  "validation": {
+    "required": {
+      "email": "Email is required",
+      "password": "Password is required",
+      "name": "Name is required"
+    },
+    "email": {
+      "invalid": "Please enter a valid email address",
+      "wrong": "Wrong email"
+    },
+    "password": {
+      "min": "Password must be at least 8 characters long",
+      "max": "Password must be less than 32 characters",
+      "wrong": "Wrong password"
+    },
+    "name": {
+      "min": "Name must be at least 3 characters long",
+      "max": "Name must be less than 50 characters"
     }
   }
 }

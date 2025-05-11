@@ -1,28 +1,39 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Layout from '../components/layout/Layout';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { toast } from "@/hooks/use-toast";
-import { TranslationConstants } from '@/utils/constants';
+import { PagesRoutesConstants, TranslationConstants } from '@/utils/constants';
 import Logo from '@/components/shared/Logo';
+import LoginForm from '@/components/pages/auth/LoginForm';
+import { useToast } from "@/hooks/use-toast";
+import { ToastVariantsConstants } from '@/utils/constants';
+import { UserService } from '@/api/services';
 
 const LoginPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
-  // TODO: Redirect if already logged in
-  // useEffect(() => {
-  // }, []);
+  useEffect(() => {
+    async function fetchMe() {
+      try {
+        await UserService.getMe();
+        navigate(PagesRoutesConstants.EVENTS);
+      } catch {
+        // PASS
+      }
+    }
+    fetchMe();
+  }, [navigate]);
 
-  // TODO: Handle submit
-  const handleSubmit = async (e: React.FormEvent) => {}
-
+  const handleLoginSuccess = () => {
+    toast({
+      title: t(TranslationConstants.COMMON.MESSAGES.SUCCESS),
+      description: t(TranslationConstants.AUTH.LOGIN_SUCCESS),
+      variant: ToastVariantsConstants.SUCCESS,
+    });
+    navigate(PagesRoutesConstants.EVENTS);
+  };
 
   return (
     <Layout>
@@ -36,55 +47,9 @@ const LoginPage: React.FC = () => {
           </h2>
         </div>
 
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="mt-8 mx-4 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white dark:bg-duck-brown/5 py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-duck-yellow/20">
-            <form className="space-y-6" onSubmit={handleSubmit}>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                  {t(TranslationConstants.AUTH.EMAIL)}
-                </label>
-                <div className="mt-1">
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-                    className="border-duck-yellow/20 focus:border-duck-yellow focus:ring-duck-yellow"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                  {t(TranslationConstants.AUTH.PASSWORD)}
-                </label>
-                <div className="mt-1">
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    value={password}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-                    className="border-duck-yellow/20 focus:border-duck-yellow focus:ring-duck-yellow"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Button
-                  type="submit"
-                  className="w-full bg-duck-yellow hover:bg-duck-yellow/80 text-duck-brown font-medium"
-                  disabled={isLoading}
-                >
-                  {isLoading ? t(TranslationConstants.COMMON.LOADING) : t(TranslationConstants.AUTH.LOGIN)}
-                </Button>
-              </div>
-            </form>
+            <LoginForm onSuccess={handleLoginSuccess} />
           </div>
         </div>
       </div>
