@@ -2,11 +2,14 @@ import request from 'supertest';
 import { app } from '@/index';
 import { UserFixture } from '@tests/fixtures';
 import { HTTP_STATUS_CODE, ROUTES } from '@/utils';
-import { CreateUserDto, CreateUserResponseDto, SignInDto, SignInResponseDto, UserRoleEnum } from '@/types';
+import { CreateUserDto, CreateUserResponseDto, GetUserResponseDto, RefreshTokenResponseDto, SignInDto, SignInResponseDto, UserRoleEnum } from '@/types';
 import { faker } from '@faker-js/faker';
+import { login } from '@tests/utils';
 
 const loginRoute = `/${ROUTES.BASE}/${ROUTES.USER}/${ROUTES.SIGN_IN}`;
 const registerRoute = `/${ROUTES.BASE}/${ROUTES.USER}/${ROUTES.SIGN_UP}`;
+const refreshTokenRoute = `/${ROUTES.BASE}/${ROUTES.USER}/${ROUTES.REFRESH_TOKEN}`;
+const meRoute = `/${ROUTES.BASE}/${ROUTES.USER}/${ROUTES.ME}`;
 const testValidPassword = "Test@123";
 
 describe('Auth APIs', () => {
@@ -95,6 +98,69 @@ describe('Auth APIs', () => {
             // Assert
             expect(response.status).toBe(HTTP_STATUS_CODE.BAD_REQUEST);
             expect(signInResponse.message).toBe("Wrong email");
+        });
+
+        it('should refresh token successfully', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.userData.email!,
+                password: UserFixture.userData.password!
+            };
+            const { refreshToken } = await login(signInDto);
+            
+            // Act
+            const response = await request(app)
+                .post(refreshTokenRoute)
+                .set('Authorization', `Bearer ${refreshToken}`)
+                .set('Content-Type', 'application/json');
+            const refreshTokenResponse: RefreshTokenResponseDto = response.body;
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.OK);
+            expect(refreshTokenResponse.token).toBeDefined();
+        });
+
+        it('should not refresh token with invalid token', async () => {
+            // Arrange
+            const refreshToken = "InvalidToken";
+
+            // Act
+            const response = await request(app).post(refreshTokenRoute).set('Authorization', `Bearer ${refreshToken}`);
+            const refreshTokenResponse = response.body;
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
+            expect(refreshTokenResponse.message).toBe("Invalid token");
+        });
+
+        it('should get user details successfully', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.userData.email!,
+                password: UserFixture.userData.password!
+            };
+            const { token } = await login(signInDto);
+
+            // Act
+            const response = await request(app).get(meRoute).set('Authorization', `Bearer ${token}`);
+            const meResponse: GetUserResponseDto = response.body;
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.OK);
+            expect(meResponse.user.email).toBe(UserFixture.userData.email);
+        });
+
+        it('should not get user details with invalid token', async () => {
+            // Arrange
+            const token = "InvalidToken";
+
+            // Act
+            const response = await request(app).get(meRoute).set('Authorization', `Bearer ${token}`);
+            const meResponse = response.body;
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
+            expect(meResponse.message).toBe("Invalid token");
         });
     });
 

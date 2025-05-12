@@ -62,7 +62,13 @@ export class UserService {
     }
 
     refreshToken = async (refreshToken: string): Promise<RefreshTokenResponseDto> => {
-        const { id: userId } = jwt.verify(refreshToken, config.jwtRefreshSecret) as Partial<IJwtUser>;
+        let userId: string | undefined;
+        try {
+            const decoded = jwt.verify(refreshToken, config.jwtRefreshSecret) as Partial<IJwtUser>;
+            userId = decoded.id;
+        } catch {
+            throw new UnauthorizedError("Invalid token");
+        }
         if (!userId) {
             throw new UnauthorizedError("Invalid token");
         }
