@@ -44,6 +44,6 @@ export class TagController {
   async deleteTag(req: Request, res: Response) {
     const id: IdParamDto = IdParamZod.parse(req.params.id);
     await tagService.deleteTag(id);
-    res.status(HTTP_STATUS_CODE.OK).send().end();
+    res.status(HTTP_STATUS_CODE.NO_CONTENT).send().end();
   }
 }
