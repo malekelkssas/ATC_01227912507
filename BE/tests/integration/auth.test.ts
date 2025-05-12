@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { app } from '@/index';
 import { UserFixture } from '@tests/fixtures';
-import { HTTP_STATUS_CODE, ROUTES } from '@/utils';
+import { HTTP_HEADERS, HTTP_STATUS_CODE, JWT_CONSTANTS, ROUTES } from '@/utils';
 import { CreateUserDto, CreateUserResponseDto, GetUserResponseDto, RefreshTokenResponseDto, SignInDto, SignInResponseDto, UserRoleEnum } from '@/types';
 import { faker } from '@faker-js/faker';
 import { login } from '@tests/utils';
@@ -99,7 +99,9 @@ describe('Auth APIs', () => {
             expect(response.status).toBe(HTTP_STATUS_CODE.BAD_REQUEST);
             expect(signInResponse.message).toBe("Wrong email");
         });
+    });
 
+    describe('Auth APIs (Refresh Token & Get Me)', () => {
         it('should refresh token successfully', async () => {
             // Arrange
             const signInDto: SignInDto = {
@@ -111,8 +113,8 @@ describe('Auth APIs', () => {
             // Act
             const response = await request(app)
                 .post(refreshTokenRoute)
-                .set('Authorization', `Bearer ${refreshToken}`)
-                .set('Content-Type', 'application/json');
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${refreshToken}`)
+                .set(HTTP_HEADERS.CONTENT_TYPE, 'application/json');
             const refreshTokenResponse: RefreshTokenResponseDto = response.body;
 
             // Assert
@@ -125,7 +127,7 @@ describe('Auth APIs', () => {
             const refreshToken = "InvalidToken";
 
             // Act
-            const response = await request(app).post(refreshTokenRoute).set('Authorization', `Bearer ${refreshToken}`);
+            const response = await request(app).post(refreshTokenRoute).set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${refreshToken}`);
             const refreshTokenResponse = response.body;
 
             // Assert
@@ -142,7 +144,7 @@ describe('Auth APIs', () => {
             const { token } = await login(signInDto);
 
             // Act
-            const response = await request(app).get(meRoute).set('Authorization', `Bearer ${token}`);
+            const response = await request(app).get(meRoute).set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`);
             const meResponse: GetUserResponseDto = response.body;
 
             // Assert
@@ -155,7 +157,7 @@ describe('Auth APIs', () => {
             const token = "InvalidToken";
 
             // Act
-            const response = await request(app).get(meRoute).set('Authorization', `Bearer ${token}`);
+            const response = await request(app).get(meRoute).set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`);
             const meResponse = response.body;
 
             // Assert

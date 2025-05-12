@@ -7,3 +7,4 @@ export * from './user.constants';
 export * from './routes.constants';
 export * from './jwt.constants';
 export * from './tag.constants';
+export * from './http-headers.constants';

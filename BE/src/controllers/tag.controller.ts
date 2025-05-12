@@ -7,7 +7,7 @@ import {
   IdParamDto,
   IdParamZod,
 } from "@/types";
-import { HTTP_STATUS_CODE, TryCatchController } from "@/utils";
+import { extractLanguage, HTTP_STATUS_CODE, TryCatchController } from "@/utils";
 import { Request, Response } from "express";
 
 export class TagController {
@@ -28,8 +28,15 @@ export class TagController {
   }
 
   @TryCatchController
-  async getTags( _: Request, res: Response) {
-    const response: GetTagsResponseDto = await tagService.getTags();
+  async getTags(req: Request, res: Response) {
+    const language = extractLanguage(req);
+    const response = await tagService.getTags(language);
+    res.status(HTTP_STATUS_CODE.OK).json(response);
+  }
+
+  @TryCatchController
+  async getFullTags(req: Request, res: Response) {
+    const response = await tagService.getFullTags();
     res.status(HTTP_STATUS_CODE.OK).json(response);
   }
 

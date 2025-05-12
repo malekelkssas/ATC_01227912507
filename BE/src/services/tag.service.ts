@@ -1,5 +1,5 @@
 import { tagRepository } from "@/repository";
-import { CreateTagDto, CreateTagResponseDto, GetTagsResponseDto, IdParamDto } from "@/types";
+import { CreateTagDto, CreateTagResponseDto, GetFullTagsResponseDto, GetTagResponseDto, GetTagsResponseDto, IdParamDto, ITag, LanguageEnum } from "@/types";
 export class TagService {
     private static tagService: TagService;
 
@@ -15,12 +15,26 @@ export class TagService {
         return tag;
     }
 
-    async getTags(): Promise<GetTagsResponseDto> {
+    async getTags(language: LanguageEnum): Promise<GetTagsResponseDto> {
+        const tags = await tagRepository.find({});
+        return tags.map((tag) => this.localizeTag(tag, language));
+    }
+
+    async getFullTags(): Promise<GetFullTagsResponseDto[]> {
         const tags = await tagRepository.find({});
         return tags;
     }
+
     async deleteTag(id: IdParamDto): Promise<void> {
         await tagRepository.delete(id);
+    }
+
+    private localizeTag(tag: ITag, language: LanguageEnum): GetTagResponseDto {
+        return {
+            _id: tag._id,
+            name: tag.name[language],
+            color: tag.color,
+        };
     }
 
 }

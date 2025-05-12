@@ -4,7 +4,7 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import mongoSanitize from 'express-mongo-sanitize';
-import { HttpMethod, NODE_ENV, ROUTES } from "@/utils";
+import { HTTP_HEADERS, HttpMethod, NODE_ENV, ROUTES } from "@/utils";
 import rateLimit from "express-rate-limit";
 import { connectDB } from "./config";
 import { errorHandler, transactionMiddleware } from "./middlewares";
@@ -31,7 +31,7 @@ app.use(
       HttpMethod.PUT,
       HttpMethod.DELETE,
     ],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: [HTTP_HEADERS.CONTENT_TYPE, HTTP_HEADERS.AUTHORIZATION, HTTP_HEADERS.ACCEPT_LANGUAGE],
     credentials: true,
   })
 );

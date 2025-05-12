@@ -1,3 +1,3 @@
 export const JWT_CONSTANTS = {
-    BEARER_PREFIX: 'Bearer ',
+    BEARER_PREFIX: 'Bearer',
 }

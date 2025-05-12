@@ -1,5 +1,5 @@
 import { UserRoleEnum } from "@/types/enums/user-role.enum"
-import { IUser } from "@/types/interfaces/Iuser"
+import { IUser } from "@/types/interfaces/IUser"
 
 export class UserFixture {
     static userData: Partial<IUser> = {

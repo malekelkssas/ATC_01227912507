@@ -22,6 +22,7 @@ export const ROUTES = {
      * Tag Routes
      */
     TAGS: "tags",
+    FULL_TAGS: "full",
 
     /**
      * Shared
