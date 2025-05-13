@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { app } from '@/index';
-import { TagFixture, UserFixture } from '@tests/fixtures';
+import { UserFixture } from '@tests/fixtures';
 import { HTTP_HEADERS, HTTP_STATUS_CODE, JWT_CONSTANTS, ROUTES } from '@/utils';
 import { faker } from '@faker-js/faker';
 import { login } from '@tests/utils';
