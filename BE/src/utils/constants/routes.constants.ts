@@ -25,6 +25,12 @@ export const ROUTES = {
     FULL_TAGS: "full",
 
     /**
+     * Event Routes
+     */
+    EVENTS: "events",
+    FULL_EVENTS: "full",
+
+    /**
      * Shared
      */
     ID: ":id",

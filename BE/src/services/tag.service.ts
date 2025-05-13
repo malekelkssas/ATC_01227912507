@@ -17,7 +17,7 @@ export class TagService {
 
     async getTags(language: LanguageEnum): Promise<GetTagsResponseDto> {
         const tags = await tagRepository.find({});
-        return tags.map((tag) => this.localizeTag(tag, language));
+        return tags.map((tag) => TagService.localizeTag(tag, language));
     }
 
     async getFullTags(): Promise<GetFullTagsResponseDto[]> {
@@ -29,7 +29,7 @@ export class TagService {
         await tagRepository.delete(id);
     }
 
-    private localizeTag(tag: ITag, language: LanguageEnum): GetTagResponseDto {
+    static localizeTag(tag: ITag, language: LanguageEnum): GetTagResponseDto {
         return {
             _id: tag._id,
             name: tag.name[language],

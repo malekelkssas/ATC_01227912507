@@ -1,22 +1,26 @@
 import { z } from 'zod';
 import { LanguageZod } from './language.dto';
+import { VALIDATION_MESSAGES } from '@/utils/constants';
 
 // Create Tag
 export const CreateTagZod = z.object({
     name: z.object({
         en: z.string({
-            required_error: "English name is required",
-        }).min(3, "English name must be at least 3 characters long").max(10, "English name must be less than 10 characters"),
+            required_error: VALIDATION_MESSAGES.TAG.NAME.EN.REQUIRED,
+        }).min(3, VALIDATION_MESSAGES.TAG.NAME.EN.MIN_LENGTH)
+          .max(10, VALIDATION_MESSAGES.TAG.NAME.EN.MAX_LENGTH),
         ar: z.string({
-            required_error: "Arabic name is required",
-        }).min(3, "Arabic name must be at least 3 characters long").max(10, "Arabic name must be less than 10 characters"),
+            required_error: VALIDATION_MESSAGES.TAG.NAME.AR.REQUIRED,
+        }).min(3, VALIDATION_MESSAGES.TAG.NAME.AR.MIN_LENGTH)
+          .max(10, VALIDATION_MESSAGES.TAG.NAME.AR.MAX_LENGTH),
     }, {
-        required_error: "Name must be an object with 'en' and 'ar' properties",
-        invalid_type_error: "Name must be an object with 'en' and 'ar' properties"
+        required_error: VALIDATION_MESSAGES.TAG.NAME.REQUIRED_OBJECT,
+        invalid_type_error: VALIDATION_MESSAGES.TAG.NAME.INVALID_TYPE
     }),
     color: z.string({
-        required_error: "Color is required",
-    }).regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid color format").default("#FFFF00"),
+        required_error: VALIDATION_MESSAGES.TAG.COLOR.REQUIRED,
+    }).regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, VALIDATION_MESSAGES.TAG.COLOR.INVALID_FORMAT)
+      .default("#FFFF00"),
 });
 
 export type CreateTagDto = z.infer<typeof CreateTagZod>;

@@ -1,26 +1,27 @@
 import { z } from 'zod';
 import { UserRoleEnum } from '@/types';
+import { VALIDATION_MESSAGES } from '@/utils/constants';
 
 
 // Create User
 export const CreateUserZod = z.object({
   name: z
     .string({
-      required_error: "Name is required",
+      required_error: VALIDATION_MESSAGES.USER.NAME.REQUIRED,
     })
-    .min(3, "Name must be at least 3 characters long")
-    .max(50, "Name must be less than 50 characters"),
+    .min(3, VALIDATION_MESSAGES.USER.NAME.MIN_LENGTH)
+    .max(50, VALIDATION_MESSAGES.USER.NAME.MAX_LENGTH),
   email: z
     .string({
-      required_error: "Email is required",
+      required_error: VALIDATION_MESSAGES.USER.EMAIL.REQUIRED,
     })
-    .email("Please enter a valid email address"),
+    .email(VALIDATION_MESSAGES.USER.EMAIL.INVALID),
   password: z
     .string({
-      required_error: "Password is required",
+      required_error: VALIDATION_MESSAGES.USER.PASSWORD.REQUIRED,
     })
-    .min(8, "Password must be at least 8 characters long")
-    .max(32, "Password must be less than 32 characters"),
+    .min(8, VALIDATION_MESSAGES.USER.PASSWORD.MIN_LENGTH)
+    .max(32, VALIDATION_MESSAGES.USER.PASSWORD.MAX_LENGTH),
   role: z.literal(UserRoleEnum.USER).default(UserRoleEnum.USER),
 });
 
@@ -35,12 +36,17 @@ export type CreateUserResponseDto = z.infer<typeof CreateUserResponseZod>;
 
 // Sign In
 export const SignInZod = z.object({
-  email: z.string({
-    required_error: "Email is required",
-  }).email("Wrong email"),
-  password: z.string({
-    required_error: "Password is required",
-  }).min(8, "Wrong password").max(32, "Wrong password"),
+  email: z
+    .string({
+      required_error: VALIDATION_MESSAGES.USER.EMAIL.REQUIRED,
+    })
+    .email(VALIDATION_MESSAGES.USER.EMAIL.WRONG),
+  password: z
+    .string({
+      required_error: VALIDATION_MESSAGES.USER.PASSWORD.REQUIRED,
+    })
+    .min(8, VALIDATION_MESSAGES.USER.PASSWORD.WRONG)
+    .max(32, VALIDATION_MESSAGES.USER.PASSWORD.WRONG),
 }).required();
 
 export type SignInDto = z.infer<typeof SignInZod>;

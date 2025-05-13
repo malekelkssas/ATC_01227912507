@@ -3,7 +3,6 @@ import {
   CreateTagDto,
   CreateTagResponseDto,
   CreateTagZod,
-  GetTagsResponseDto,
   IdParamDto,
   IdParamZod,
 } from "@/types";

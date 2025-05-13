@@ -8,3 +8,5 @@ export * from './routes.constants';
 export * from './jwt.constants';
 export * from './tag.constants';
 export * from './http-headers.constants';
+export * from './event.constants';
+export * from './validation-messages.constants';
