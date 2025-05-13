@@ -5,7 +5,7 @@ import { login } from '@tests/utils';
 import { HTTP_HEADERS, HTTP_STATUS_CODE, JWT_CONSTANTS, ROUTES } from '@/utils';
 import { Event, Tag } from '@/models';
 import { UserFixture } from '@tests/fixtures';
-import { GetEventResponseDto, ITag, PaginationQueryDto, PaginationResponseDto, SignInDto } from '@/types';
+import { CreateEventDto, CreateEventResponseDto, GetEventResponseDto, ITag, PaginationQueryDto, PaginationResponseDto, SignInDto } from '@/types';
 import mongoose from 'mongoose';
 
 const eventsRoute = `/${ROUTES.BASE}/${ROUTES.EVENTS}`;
@@ -151,6 +151,273 @@ describe('Event APIs', () => {
             expect(response.status).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
             expect(response.body.message).toBe("Invalid token");
         });
+    });
+
+    describe('Create Event API', () => {
+        it('should create an event successfully', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.adminData.email!,
+                password: UserFixture.adminData.password!
+            };
+            const { token } = await login(signInDto);
+            const tags = await Tag.find();
+            const tagId = tags[0]._id;
+            const createEventDto: CreateEventDto = {
+                name: {
+                    en: faker.lorem.word(),
+                    ar: faker.lorem.word()
+                },
+                description: {
+                    en: faker.lorem.sentence(),
+                    ar: faker.lorem.sentence()
+                },
+                venue: {
+                    en: faker.lorem.word(),
+                    ar: faker.lorem.word()
+                },
+                category: [tagId],
+                imageUrl: faker.image.url(),
+                price: faker.number.int({ min: 1, max: 1000 }),
+                date: faker.date.future()
+
+            };
+
+            // Act
+            const response = await request(app)
+                .post(eventsRoute)
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`)
+                .send(createEventDto);
+            const body: CreateEventResponseDto = response.body;
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.CREATED);
+            expect(body.name.en).toBe(createEventDto.name.en);
+            expect(body.description.en).toBe(createEventDto.description.en);
+            expect(body.category.length).toBe(1);
+            expect(body.category[0].name.en).toBe((tags[0] as ITag).name.en);
+            expect(body.venue.en).toBe(createEventDto.venue.en);
+            expect(body.imageUrl).toBe(createEventDto.imageUrl);
+            expect(body.price).toBe(createEventDto.price);
+            expect(body.date).toBe(createEventDto.date.toISOString());
+        });
+
+        it('should return a 400 error if the english name is not provided', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.adminData.email!,
+                password: UserFixture.adminData.password!
+            };
+            const { token } = await login(signInDto);
+            const tags = await Tag.find();
+            const tagId = tags[0]._id;
+            const createEventDto: CreateEventDto = {
+                name: {
+                    ar: faker.lorem.word()
+                } as any,
+                description: {
+                    en: faker.lorem.sentence(),
+                    ar: faker.lorem.sentence()
+                },
+                venue: {
+                    en: faker.lorem.word(),
+                    ar: faker.lorem.word()
+                },
+                category: [tagId],
+                imageUrl: faker.image.url(),
+                price: faker.number.int({ min: 1, max: 1000 }),
+                date: faker.date.future()
+            };
+
+            // Act
+            const response = await request(app)
+                .post(eventsRoute)
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`)
+                .send(createEventDto);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.BAD_REQUEST);
+            expect(response.body.message).toBe("English name is required");
+        });
+
+        it('should return a 400 error if the name is not provided', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.adminData.email!,
+                password: UserFixture.adminData.password!
+            };
+            const { token } = await login(signInDto);
+            const tags = await Tag.find();
+            const tagId = tags[0]._id;
+            const createEventDto: CreateEventDto = {
+                name: undefined as any,
+                description: {
+                    en: faker.lorem.sentence(),
+                    ar: faker.lorem.sentence()
+                },
+                venue: {
+                    en: faker.lorem.word(),
+                    ar: faker.lorem.word()
+                },
+                category: [tagId],
+                imageUrl: faker.image.url(),
+                price: faker.number.int({ min: 1, max: 1000 }),
+                date: faker.date.future()
+            };
+
+            // Act
+            const response = await request(app)
+                .post(eventsRoute)
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`)
+                .send(createEventDto);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.BAD_REQUEST);
+            expect(response.body.message).toBe("Name is required");
+        });
+
+        it('should return a 400 error if the category is empty', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.adminData.email!,
+                password: UserFixture.adminData.password!
+            };
+            const { token } = await login(signInDto);
+            const createEventDto: CreateEventDto = {
+                name: {
+                    en: faker.lorem.word(),
+                    ar: faker.lorem.word()
+                },
+                description: {
+                    en: faker.lorem.sentence(),
+                    ar: faker.lorem.sentence()
+                },
+                venue: {
+                    en: faker.lorem.word(),
+                    ar: faker.lorem.word()
+                },
+                category: [],
+                imageUrl: faker.image.url(),
+                price: faker.number.int({ min: 1, max: 1000 }),
+                date: faker.date.future()
+            };
+
+            // Act
+            const response = await request(app)
+                .post(eventsRoute)
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`)
+                .send(createEventDto);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.BAD_REQUEST);
+            expect(response.body.message).toBe("Category must be at least 1 item");
+        });
+
+        it('should return a 400 error if the category id is invalid', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.adminData.email!,
+                password: UserFixture.adminData.password!
+            };
+            const { token } = await login(signInDto);
+            const createEventDto: CreateEventDto = {
+                name: {
+                    en: faker.lorem.word(),
+                    ar: faker.lorem.word()
+                },
+                description: {
+                    en: faker.lorem.sentence(),
+                    ar: faker.lorem.sentence()
+                },
+                venue: {
+                    en: faker.lorem.word(),
+                    ar: faker.lorem.word()
+                },
+                category: [faker.string.uuid()],
+                imageUrl: faker.image.url(),
+                price: faker.number.int({ min: 1, max: 1000 }),
+                date: faker.date.future()
+            };
+
+            // Act
+            const response = await request(app)
+                .post(eventsRoute)
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`)
+                .send(createEventDto);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.BAD_REQUEST);
+            expect(response.body.message).toBe("Invalid category ID format");
+        });
+
+        it('should return a 403 error if the user is not authorized', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.userData.email!,
+                password: UserFixture.userData.password!
+            };
+            const { token } = await login(signInDto);
+            const createEventDto: CreateEventDto = {
+                name: {
+                    en: faker.lorem.word(),
+                    ar: faker.lorem.word()
+                },
+                description: {
+                    en: faker.lorem.sentence(),
+                    ar: faker.lorem.sentence()
+                },
+                venue: {
+                    en: faker.lorem.word(),
+                    ar: faker.lorem.word()
+                },
+                category: [faker.string.uuid()],
+                imageUrl: faker.image.url(),
+                price: faker.number.int({ min: 1, max: 1000 }),
+                date: faker.date.future()
+            };
+
+            // Act
+            const response = await request(app)
+                .post(eventsRoute)
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`)
+                .send(createEventDto);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.FORBIDDEN);
+            expect(response.body.message).toBe("Forbidden");
+        });
+
+        it('should return a 401 error if the user is not authenticated', async () => {
+            // Arrange
+            const createEventDto: CreateEventDto = {
+                name: {
+                    en: faker.lorem.word(),
+                    ar: faker.lorem.word()
+                },
+                description: {
+                    en: faker.lorem.sentence(),
+                    ar: faker.lorem.sentence()
+                },
+                venue: {
+                    en: faker.lorem.word(),
+                    ar: faker.lorem.word()
+                },
+                category: [faker.string.uuid()],
+                imageUrl: faker.image.url(),
+                price: faker.number.int({ min: 1, max: 1000 }),
+                date: faker.date.future()
+            };
+
+            // Act
+            const response = await request(app)
+                .post(eventsRoute)
+                .send(createEventDto);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
+            expect(response.body.message).toBe("Invalid token");
+        });
+        
     });
 });
 

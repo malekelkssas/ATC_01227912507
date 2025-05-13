@@ -1,9 +1,8 @@
 import { z } from 'zod';
 import { LanguageZod } from './language.dto';
 import mongoose from 'mongoose';
-import { GetTagResponseZod } from './tag.dto';
+import { GetFullTagsResponseZod, GetTagResponseZod } from './tag.dto';
 import { VALIDATION_MESSAGES } from '@/utils/constants';
-import { PaginationResponseZod } from './pagination-query.dto';
 
 export const CreateEventZod = z.object({
     name: z.object({
@@ -75,7 +74,7 @@ export const CreateEventResponseZod = z.object({
     _id: z.string(),
     name: LanguageZod,
     description: LanguageZod,
-    category: z.array(GetTagResponseZod),
+    category: z.array(GetFullTagsResponseZod),
     venue: LanguageZod,
     imageUrl: z.string(),
     price: z.number(),
