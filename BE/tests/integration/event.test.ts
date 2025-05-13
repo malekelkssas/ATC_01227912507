@@ -7,8 +7,20 @@ import { Event, Tag } from '@/models';
 import { UserFixture } from '@tests/fixtures';
 import { CreateEventDto, CreateEventResponseDto, GetEventResponseDto, ITag, PaginationQueryDto, PaginationResponseDto, SignInDto, UpdateEventDto } from '@/types';
 import mongoose from 'mongoose';
+import path from 'path';
+import fs from 'fs';
+import { UPLOAD_IMAGES_CONSTANTS } from '@/utils/constants/upload-images.constants';
 
 const eventsRoute = `/${ROUTES.BASE}/${ROUTES.EVENTS}`;
+
+function createTestImage() {
+    const testImagePath = path.join(__dirname, '../fixtures/test-image.png');
+    if (!fs.existsSync(testImagePath)) {
+        const testImage = Buffer.from('fake image data');
+        fs.writeFileSync(testImagePath, testImage);
+    }
+    return testImagePath;
+}
 
 describe('Event APIs', () => {
     describe('Get Events/Event API', () => {
@@ -163,7 +175,9 @@ describe('Event APIs', () => {
             const { token } = await login(signInDto);
             const tags = await Tag.find();
             const tagId = tags[0]._id;
-            const createEventDto: CreateEventDto = {
+            const testImagePath = createTestImage();
+
+            const eventData: CreateEventDto = {
                 name: {
                     en: faker.lorem.word(),
                     ar: faker.lorem.word()
@@ -180,26 +194,36 @@ describe('Event APIs', () => {
                 imageUrl: faker.image.url(),
                 price: faker.number.int({ min: 1, max: 1000 }),
                 date: faker.date.future()
-
             };
 
             // Act
             const response = await request(app)
                 .post(eventsRoute)
                 .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`)
-                .send(createEventDto);
+                .field(`${UPLOAD_IMAGES_CONSTANTS.DATA_FIELD_NAME}`, JSON.stringify(eventData))
+                .attach(`${UPLOAD_IMAGES_CONSTANTS.IMAGE_FIELD_NAME}`, testImagePath);
+            
             const body: CreateEventResponseDto = response.body;
 
             // Assert
             expect(response.status).toBe(HTTP_STATUS_CODE.CREATED);
-            expect(body.name.en).toBe(createEventDto.name.en);
-            expect(body.description.en).toBe(createEventDto.description.en);
+            expect(body.name.en).toBe(eventData.name.en);
+            expect(body.description.en).toBe(eventData.description.en);
             expect(body.category.length).toBe(1);
             expect(body.category[0].name.en).toBe((tags[0] as ITag).name.en);
-            expect(body.venue.en).toBe(createEventDto.venue.en);
-            expect(body.imageUrl).toBe(createEventDto.imageUrl);
-            expect(body.price).toBe(createEventDto.price);
-            expect(body.date).toBe(createEventDto.date.toISOString());
+            expect(body.venue.en).toBe(eventData.venue.en);
+            // Check if imageUrl matches the expected pattern
+            expect(body.imageUrl).toMatch(new RegExp(
+                `^${UPLOAD_IMAGES_CONSTANTS.IMAGE_PATH}event-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\.(jpg|jpeg|png|webp)$`,
+                'i'
+            ));
+            expect(body.price).toBe(eventData.price);
+            expect(body.date).toBe(eventData.date.toISOString());
+
+            // Cleanup
+            if (fs.existsSync(testImagePath)) {
+                fs.unlinkSync(testImagePath);
+            }
         });
 
         it('should return a 400 error if the english name is not provided', async () => {
