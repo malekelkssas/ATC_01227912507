@@ -5,6 +5,9 @@ import {
   CreateTagZod,
   IdParamDto,
   IdParamZod,
+  UpdateTagDto,
+  UpdateTagResponseDto,
+  UpdateTagZod,
 } from "@/types";
 import { extractLanguage, HTTP_STATUS_CODE, TryCatchController } from "@/utils";
 import { Request, Response } from "express";
@@ -44,5 +47,13 @@ export class TagController {
     const id: IdParamDto = IdParamZod.parse(req.params.id);
     await tagService.deleteTag(id);
     res.status(HTTP_STATUS_CODE.NO_CONTENT).send().end();
+  }
+
+  @TryCatchController
+  async updateTag(req: Request, res: Response) {
+    const id: IdParamDto = IdParamZod.parse(req.params.id);
+    const data: UpdateTagDto = UpdateTagZod.parse(req.body);
+    const response: UpdateTagResponseDto = await tagService.updateTag(id, data);
+    res.status(HTTP_STATUS_CODE.OK).json(response);
   }
 }

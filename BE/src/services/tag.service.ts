@@ -1,5 +1,6 @@
 import { tagRepository } from "@/repository";
-import { CreateTagDto, CreateTagResponseDto, GetFullTagsResponseDto, GetTagResponseDto, GetTagsResponseDto, IdParamDto, ITag, LanguageEnum } from "@/types";
+import { CreateTagDto, CreateTagResponseDto, GetFullTagsResponseDto, GetTagResponseDto, GetTagsResponseDto, IdParamDto, ITag, LanguageEnum, UpdateTagDto, UpdateTagResponseDto } from "@/types";
+import { NotFoundError, transformToDotNotation } from "@/utils";
 export class TagService {
     private static tagService: TagService;
 
@@ -27,6 +28,15 @@ export class TagService {
 
     async deleteTag(id: IdParamDto): Promise<void> {
         await tagRepository.delete(id);
+    }
+
+    async updateTag(id: IdParamDto, data: UpdateTagDto): Promise<UpdateTagResponseDto> {
+        const updateData = transformToDotNotation(data);
+        const tag = await tagRepository.update(id, updateData);
+        if (!tag) {
+            throw new NotFoundError("Tag not found");
+        }
+        return tag;
     }
 
     static localizeTag(tag: ITag, language: LanguageEnum): GetTagResponseDto {

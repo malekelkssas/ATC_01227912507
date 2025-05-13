@@ -21,7 +21,7 @@ export class TagRepository extends BaseRepository<ITag> {
 
     @WrapDatabaseError
     async update(id: string, item: Partial<ITag>): Promise<ITag | null> {
-        return this.model.findByIdAndUpdate(id, item, { new: true });
+        return this.model.findByIdAndUpdate(id, { $set: item }, { new: true });
     }
 
     @WrapDatabaseError

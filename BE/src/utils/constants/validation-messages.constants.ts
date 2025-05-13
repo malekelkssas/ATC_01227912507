@@ -119,11 +119,15 @@ export const VALIDATION_MESSAGES = {
                 MAX_LENGTH: "Arabic name must be less than 10 characters"
             },
             INVALID_TYPE: "Name must be an object with 'en' and 'ar' properties",
-            REQUIRED_OBJECT: "Name must be an object with 'en' and 'ar' properties"
+            REQUIRED_OBJECT: "Name must be an object with 'en' and 'ar' properties",
+            EMPTY: "At least one language field must be provided for name"
         },
         COLOR: {
             REQUIRED: "Color is required",
             INVALID_FORMAT: "Invalid color format"
+        },
+        UPDATE: {
+            EMPTY: "At least one field must be provided for update"
         }
     },
 
