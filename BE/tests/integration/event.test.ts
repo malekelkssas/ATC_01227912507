@@ -6,6 +6,7 @@ import { HTTP_HEADERS, HTTP_STATUS_CODE, JWT_CONSTANTS, ROUTES } from '@/utils';
 import { Event, Tag } from '@/models';
 import { UserFixture } from '@tests/fixtures';
 import { GetEventResponseDto, ITag, PaginationQueryDto, PaginationResponseDto, SignInDto } from '@/types';
+import mongoose from 'mongoose';
 
 const eventsRoute = `/${ROUTES.BASE}/${ROUTES.EVENTS}`;
 
@@ -78,6 +79,78 @@ describe('Event APIs', () => {
             expect(body.date).toBe(events[0].date.toISOString());
         });
         
+    });
+
+    describe('Delete Event API', () => {
+        it('should delete an event successfully', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.adminData.email!,
+                password: UserFixture.adminData.password!
+            };
+            const { token } = await login(signInDto);
+            const events = await Event.find();
+            const eventId = events[0]._id;
+
+            // Act
+            const response = await request(app)
+                .delete(`${eventsRoute}/${eventId}`)
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`);
+            
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.NO_CONTENT);
+            const deletedEvent = await Event.findById(eventId);
+            expect(deletedEvent).toBeNull();
+        });
+
+        it('should return a 400 error if the id is not a mongoose id', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.adminData.email!,
+                password: UserFixture.adminData.password!
+            };
+            const { token } = await login(signInDto);
+
+            // Act
+            const response = await request(app)
+                .delete(`${eventsRoute}/invalid-id`)
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.BAD_REQUEST);
+            expect(response.body.message).toBe("Invalid ID format");
+        });
+
+        it('should return a 403 error if the user is not authorized', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.userData.email!,
+                password: UserFixture.userData.password!
+            };
+            const { token } = await login(signInDto);
+
+            // Act
+            const response = await request(app)
+                .delete(`${eventsRoute}/invalid-id`)
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.FORBIDDEN);
+            expect(response.body.message).toBe("Forbidden");
+        });
+
+        it('should return a 401 error if the user is not authenticated', async () => {
+            // Arrange
+            const eventId = new mongoose.Types.ObjectId().toString();
+
+            // Act
+            const response = await request(app)
+                .delete(`${eventsRoute}/${eventId}`);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
+            expect(response.body.message).toBe("Invalid token");
+        });
     });
 });
 
