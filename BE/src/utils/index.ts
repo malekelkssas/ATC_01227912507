@@ -6,3 +6,4 @@ export * from './decorators';
 export * from './jwt';
 export * from './localize';
 export * from './transform';
+export * from './upload';

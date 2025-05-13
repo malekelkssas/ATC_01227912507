@@ -4,11 +4,12 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import mongoSanitize from 'express-mongo-sanitize';
-import { HTTP_HEADERS, HttpMethod, NODE_ENV, ROUTES } from "@/utils";
+import { HTTP_HEADERS, HttpMethod, NODE_ENV, ROUTES, UPLOAD_IMAGES_CONSTANTS } from "@/utils";
 import rateLimit from "express-rate-limit";
 import { connectDB } from "./config";
 import { errorHandler, transactionMiddleware } from "./middlewares";
 import { userRouter, tagRouter, eventRouter } from "./routes";
+import path from 'path';
 
 dotenv.config();
 const app = express();
@@ -19,6 +20,7 @@ if (process.env.NODE_ENV === NODE_ENV.DEVELOPMENT) {
 
 const port = process.env.PORT || 3000;
 
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.json({ limit: "10kb" }));
 
 app.use(helmet());
@@ -28,13 +30,15 @@ app.use(
     methods: [
       HttpMethod.GET,
       HttpMethod.POST,
-      HttpMethod.PUT,
+      HttpMethod.PATCH,
       HttpMethod.DELETE,
     ],
     allowedHeaders: [HTTP_HEADERS.CONTENT_TYPE, HTTP_HEADERS.AUTHORIZATION, HTTP_HEADERS.ACCEPT_LANGUAGE],
     credentials: true,
   })
 );
+
+app.use(UPLOAD_IMAGES_CONSTANTS.BASE_PATH, express.static(path.join(__dirname, `..${UPLOAD_IMAGES_CONSTANTS.BASE_PATH}`)));
 
 /**
  * @Error: express-mongo-sanitize is not working with query params -> TypeError: Cannot set property query of #<IncomingMessage> which has only a getter

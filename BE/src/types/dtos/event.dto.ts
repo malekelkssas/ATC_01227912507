@@ -2,7 +2,14 @@ import { z } from 'zod';
 import { LanguageZod } from './language.dto';
 import mongoose from 'mongoose';
 import { GetFullTagsResponseZod, GetTagResponseZod } from './tag.dto';
-import { VALIDATION_MESSAGES } from '@/utils/constants';
+import { UPLOAD_IMAGES_CONSTANTS, VALIDATION_MESSAGES } from '@/utils/constants';
+
+const ALLOWED_EXTENSIONS = /\.(jpg|jpeg|png|webp)$/i;
+
+const IMAGE_URL_PATTERN = new RegExp(
+    `^${UPLOAD_IMAGES_CONSTANTS.IMAGE_PATH}event-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}${ALLOWED_EXTENSIONS.source}$`,
+    'i'
+);
 
 export const CreateEventZod = z.object({
     name: z.object({
@@ -54,7 +61,7 @@ export const CreateEventZod = z.object({
     imageUrl: z.string({
         required_error: VALIDATION_MESSAGES.EVENT.IMAGE_URL.REQUIRED,
         invalid_type_error: VALIDATION_MESSAGES.EVENT.IMAGE_URL.INVALID_TYPE,
-    }),
+    }).regex(IMAGE_URL_PATTERN, VALIDATION_MESSAGES.EVENT.IMAGE_URL.INVALID),
     price: z.number({
         required_error: VALIDATION_MESSAGES.EVENT.PRICE.REQUIRED,
         invalid_type_error: VALIDATION_MESSAGES.EVENT.PRICE.INVALID_TYPE,
@@ -185,7 +192,8 @@ export const UpdateEventZod = z.object({
     imageUrl: z.string({
         required_error: VALIDATION_MESSAGES.EVENT.IMAGE_URL.REQUIRED,
         invalid_type_error: VALIDATION_MESSAGES.EVENT.IMAGE_URL.INVALID_TYPE,
-    }).optional(),
+    }).regex(IMAGE_URL_PATTERN, VALIDATION_MESSAGES.EVENT.IMAGE_URL.INVALID)
+      .optional(),
     price: z.number({
         required_error: VALIDATION_MESSAGES.EVENT.PRICE.REQUIRED,
         invalid_type_error: VALIDATION_MESSAGES.EVENT.PRICE.INVALID_TYPE,

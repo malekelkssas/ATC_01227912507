@@ -10,3 +10,4 @@ export * from './tag.constants';
 export * from './http-headers.constants';
 export * from './event.constants';
 export * from './validation-messages.constants';
+export * from './upload-images.constants';

@@ -63,7 +63,8 @@ export const VALIDATION_MESSAGES = {
         },
         IMAGE_URL: {
             REQUIRED: "Image URL is required",
-            INVALID_TYPE: "Image URL must be a string"
+            INVALID_TYPE: "Image URL must be a string",
+            INVALID: "Invalid image URL format"
         },
         PRICE: {
             REQUIRED: "Price is required",
