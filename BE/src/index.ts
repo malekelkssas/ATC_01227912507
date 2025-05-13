@@ -8,7 +8,7 @@ import { HTTP_HEADERS, HttpMethod, NODE_ENV, ROUTES } from "@/utils";
 import rateLimit from "express-rate-limit";
 import { connectDB } from "./config";
 import { errorHandler, transactionMiddleware } from "./middlewares";
-import { userRouter, tagRouter } from "./routes";
+import { userRouter, tagRouter, eventRouter } from "./routes";
 
 dotenv.config();
 const app = express();
@@ -70,7 +70,7 @@ if (process.env.NODE_ENV !== NODE_ENV.TEST) {
 
 app.use(`/${ROUTES.BASE}/${ROUTES.USER}`, userRouter);
 app.use(`/${ROUTES.BASE}/${ROUTES.TAGS}`, tagRouter);
-
+app.use(`/${ROUTES.BASE}/${ROUTES.EVENTS}`, eventRouter);
 app.get(`/${ROUTES.BASE}/${ROUTES.HEALTH_CHECK}`, (_, res) => {
   res.send("Quack 100% good!");
 });

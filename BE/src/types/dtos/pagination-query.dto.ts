@@ -23,3 +23,24 @@ export const PaginationQueryZod = z.object({
 
 export type PaginationQueryDto = z.infer<typeof PaginationQueryZod>;
 
+export const PaginationResponseZod = z.object({
+    data: z.array(z.any()),
+    pagination: z.object({
+        page: z.number(),
+        limit: z.number(),
+        total: z.number(),
+        hasMore: z.boolean(),
+        totalPages: z.number()
+    })
+});
+
+export type PaginationResponseDto<T> = {
+    data: T[];
+    pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        hasMore: boolean;
+        totalPages: number;
+    };
+};

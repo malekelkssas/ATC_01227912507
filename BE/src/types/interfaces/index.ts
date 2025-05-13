@@ -5,3 +5,4 @@ export * from './IUser';
 export * from './IJwtUser';
 export * from './ITag';
 export * from './ILocalizedName';
+export * from './IEvent';
