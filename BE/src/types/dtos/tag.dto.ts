@@ -70,11 +70,10 @@ export const UpdateTagZod = z.object({
           .max(10, VALIDATION_MESSAGES.TAG.NAME.AR.MAX_LENGTH)
           .optional(),
     }, {
-        required_error: VALIDATION_MESSAGES.TAG.NAME.REQUIRED_OBJECT,
         invalid_type_error: VALIDATION_MESSAGES.TAG.NAME.INVALID_TYPE
     }).refine((data) => Object.keys(data).length > 0, {
         message: VALIDATION_MESSAGES.TAG.NAME.EMPTY
-    }),
+    }).optional(),
     color: z.string({
         required_error: VALIDATION_MESSAGES.TAG.COLOR.REQUIRED,
     }).regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, VALIDATION_MESSAGES.TAG.COLOR.INVALID_FORMAT)

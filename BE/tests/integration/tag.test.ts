@@ -299,5 +299,151 @@ describe('Tag APIs', () => {
             expect(response.body[0].name.ar).toBeDefined();
         });
     })
+
+    describe('Update Tag API', () => {
+        it('should update a tag successfully', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.adminData.email!,
+                password: UserFixture.adminData.password!
+            };
+            const { token } = await login(signInDto);
+            const tags = await Tag.find();
+            const tagId = tags[0]._id;
+            const newEnglishName = faker.lorem.word();
+
+            // Act
+            const response = await request(app)
+                .patch(`${tagsRoute}/${tagId}`)
+                .send({
+                    name: {
+                        en: newEnglishName,
+                    }
+                })
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.OK);
+            expect(response.body.name.en).toBeDefined();
+            expect(response.body.name.ar).toBeDefined();
+            expect(response.body.name.en).toBe(newEnglishName);
+            expect(response.body.name.ar).toBe(tags[0].name.ar);
+        });
+
+        it('should return a 400 error if the id is not a mongoose id', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.adminData.email!,
+                password: UserFixture.adminData.password!
+            };
+            const { token } = await login(signInDto);
+
+            // Act
+            const response = await request(app)
+                .patch(`${tagsRoute}/invalid-id`)
+                .send({
+                    name: {
+                        en: faker.lorem.word(),
+                    }
+                })
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.BAD_REQUEST);
+            expect(response.body.message).toBe("Invalid ID format");
+        });
+        
+        it('should return a 403 error if the user is not authorized', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.userData.email!,
+                password: UserFixture.userData.password!
+            };
+            const { token } = await login(signInDto);
+            const tags = await Tag.find();
+            const tagId = tags[0]._id;
+
+            // Act
+            const response = await request(app)
+                .patch(`${tagsRoute}/${tagId}`)
+                .send({
+                    name: {
+                        en: faker.lorem.word(),
+                    }
+                })
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.FORBIDDEN);
+            expect(response.body.message).toBe("Forbidden");
+        });
+
+        it('should return a 401 error if the user is not authenticated', async () => {
+            // Arrange
+            const tags = await Tag.find();
+            const tagId = tags[0]._id;
+
+            // Act
+            const response = await request(app)
+                .patch(`${tagsRoute}/${tagId}`)
+                .send({
+                    name: {
+                        en: faker.lorem.word(),
+                    }
+                });
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
+            expect(response.body.message).toBe("Invalid token");
+        });
+
+        it('should return a validation error if the name is not provided', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.adminData.email!,
+                password: UserFixture.adminData.password!
+            };
+            const { token } = await login(signInDto);
+            const tags = await Tag.find();
+            const tagId = tags[0]._id;
+
+            // Act
+            const response = await request(app)
+                .patch(`${tagsRoute}/${tagId}`)
+                .send({
+                    name: {
+                    }
+                })
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.BAD_REQUEST);
+            expect(response.body.message).toBe("At least one language field must be provided for name");
+        });
+
+        it('should return a validation error if the color is not a valid hex color', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.adminData.email!,
+                password: UserFixture.adminData.password!
+            };
+            const { token } = await login(signInDto);
+            const tags = await Tag.find();
+            const tagId = tags[0]._id;
+
+            // Act
+            const response = await request(app)
+                .patch(`${tagsRoute}/${tagId}`)
+                .send({
+                    color: "invalid-color"
+                })
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.BAD_REQUEST);
+            expect(response.body.message).toBe("Invalid color format");
+        });
+        
+    })
 });
 
