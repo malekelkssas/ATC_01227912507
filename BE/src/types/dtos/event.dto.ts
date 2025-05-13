@@ -160,7 +160,9 @@ export const UpdateEventZod = z.object({
         message: VALIDATION_MESSAGES.EVENT.CATEGORY.INVALID_ID
     }), {
         invalid_type_error: VALIDATION_MESSAGES.EVENT.CATEGORY.INVALID_TYPE,
-    }).optional(),
+    }).min(1, VALIDATION_MESSAGES.EVENT.CATEGORY.MIN_ITEMS)
+      .max(4, VALIDATION_MESSAGES.EVENT.CATEGORY.MAX_ITEMS)
+      .optional(),
     venue: z.object({
         en: z.string({
             required_error: VALIDATION_MESSAGES.EVENT.VENUE.EN.REQUIRED,

@@ -5,7 +5,7 @@ import { login } from '@tests/utils';
 import { HTTP_HEADERS, HTTP_STATUS_CODE, JWT_CONSTANTS, ROUTES } from '@/utils';
 import { Event, Tag } from '@/models';
 import { UserFixture } from '@tests/fixtures';
-import { CreateEventDto, CreateEventResponseDto, GetEventResponseDto, ITag, PaginationQueryDto, PaginationResponseDto, SignInDto } from '@/types';
+import { CreateEventDto, CreateEventResponseDto, GetEventResponseDto, ITag, PaginationQueryDto, PaginationResponseDto, SignInDto, UpdateEventDto } from '@/types';
 import mongoose from 'mongoose';
 
 const eventsRoute = `/${ROUTES.BASE}/${ROUTES.EVENTS}`;
@@ -412,6 +412,132 @@ describe('Event APIs', () => {
             const response = await request(app)
                 .post(eventsRoute)
                 .send(createEventDto);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
+            expect(response.body.message).toBe("Invalid token");
+        });
+        
+    });
+
+    describe('Update Event API', () => {
+        it('should update an event successfully', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.adminData.email!,
+                password: UserFixture.adminData.password!
+            };
+            const { token } = await login(signInDto);
+            const events = await Event.find();
+            const eventId = events[0]._id.toString();
+            const updateEventDto: UpdateEventDto = {
+                name: {
+                    en: faker.lorem.word(),
+                }
+            }
+
+            // Act
+            const response = await request(app)
+                .patch(`${eventsRoute}/${eventId}`)
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`)
+                .send(updateEventDto);
+            
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.OK);
+            expect(response.body.name.en).toBe(updateEventDto.name?.en);
+            expect(response.body.name.ar).toBe(events[0].name.ar);
+            expect(response.body.category[0].name.en).toBeDefined();
+        });
+
+        it('should return a 400 error if the id is not a mongoose id', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.adminData.email!,
+                password: UserFixture.adminData.password!
+            };
+            const { token } = await login(signInDto);
+            const updateEventDto: UpdateEventDto = {
+                name: {
+                    en: faker.lorem.word(),
+                }
+            }
+
+            // Act
+            const response = await request(app)
+                .patch(`${eventsRoute}/invalid-id`)
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`)
+                .send(updateEventDto);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.BAD_REQUEST);
+            expect(response.body.message).toBe("Invalid ID format");
+        });
+        
+        it('should return a 400 error if the category is empty array', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.adminData.email!,
+                password: UserFixture.adminData.password!
+            };
+            const { token } = await login(signInDto);
+            const events = await Event.find();
+            const eventId = events[0]._id.toString();
+            const updateEventDto: UpdateEventDto = {
+                category: [],
+            }
+
+            // Act
+            const response = await request(app)
+                .patch(`${eventsRoute}/${eventId}`)
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`)
+                .send(updateEventDto);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.BAD_REQUEST);
+            expect(response.body.message).toBe("Category must be at least 1 item");
+        });
+
+        it('should return a 403 error if the user is not authorized', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.userData.email!,
+                password: UserFixture.userData.password!
+            };
+            const { token } = await login(signInDto);
+            const events = await Event.find();
+            const eventId = events[0]._id.toString();
+            const updateEventDto: UpdateEventDto = {
+                name: {
+                    en: faker.lorem.word(),
+                }
+            }
+
+            // Act
+            const response = await request(app)
+                .patch(`${eventsRoute}/${eventId}`)
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`)
+                .send(updateEventDto);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.FORBIDDEN);
+            expect(response.body.message).toBe("Forbidden");
+        });
+
+        it('should return a 401 error if the user is not authenticated', async () => {
+            // Arrange
+            const events = await Event.find();
+            const eventId = events[0]._id.toString();
+            const updateEventDto: UpdateEventDto = {
+                name: {
+                    en: faker.lorem.word(),
+                }
+            }
+
+            // Act
+            const response = await request(app)
+                .patch(`${eventsRoute}/${eventId}`)
+                .send(updateEventDto);
 
             // Assert
             expect(response.status).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);

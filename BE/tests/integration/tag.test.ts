@@ -16,8 +16,18 @@ describe('Tag APIs', () => {
             // Arrange
             const createTagDto: CreateTagDto = {
                 name: {
-                    en: faker.lorem.word(),
-                    ar: faker.lorem.word(),
+                    en: faker.lorem.word({
+                        length: {
+                            min: 3,
+                            max: 10
+                        }
+                    }),
+                    ar: faker.lorem.word({
+                        length: {
+                            min: 3,
+                            max: 10
+                        }
+                    }),
                 },
                 color: faker.color.rgb(),
             };
