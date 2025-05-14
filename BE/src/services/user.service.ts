@@ -1,5 +1,5 @@
 import { config } from "@/config";
-import { userRepository } from "@/repository";
+import { eventRepository, userRepository } from "@/repository";
 import { CreateUserDto, CreateUserResponseDto, GetEventResponseDto, GetFullEventResponseDto, GetFullEventsResponseDto, GetUserResponseDto, IJwtUser, LanguageEnum, PaginationQueryDto, PaginationResponseDto, RefreshTokenResponseDto, SignInDto, SignInResponseDto } from "@/types";
 import { generateRefreshToken, generateToken, NotFoundError, UnauthorizedError } from "@/utils";
 import bcrypt from "bcrypt";
@@ -84,6 +84,10 @@ export class UserService {
     }
 
     addEventToBookedEvents = async (userId: string, eventId: string): Promise<boolean> => {
+        const event = await eventRepository.findById(eventId);
+        if (!event) {
+            throw new NotFoundError("Event not found");
+        }
         const user = await userRepository.addEventToBookedEvents(userId, eventId);
         if (!user) {
             throw new NotFoundError("User not found");

@@ -35,8 +35,7 @@ export const UserSchema = new Schema<IUser>(
     },
     bookedEvents: {
       type: [Schema.Types.ObjectId],
-      ref: EVENT_SCHEMA_NAME,
-      unique: [true, "Event already booked"],
+      ref: EVENT_SCHEMA_NAME
     },
   },
   {
