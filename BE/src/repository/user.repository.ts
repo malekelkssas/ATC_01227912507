@@ -89,4 +89,17 @@ export class UserRepository extends BaseRepository<IUser> {
     async comparePassword(user: IUser, password: string): Promise<boolean> {
         return bcrypt.compare(password, user.password);
     }
+
+    @WrapDatabaseError
+    async getBookedEventsFromIds(userId: string, eventIds: string[]): Promise<Set<string>> {
+        const user = await this.model.findOne(
+            { 
+                _id: userId,
+                bookedEvents: { $in: eventIds }
+            },
+            { bookedEvents: 1 }
+        ).lean();
+
+        return new Set(user?.bookedEvents?.map(id => id.toString()) || []);
+    }
 }

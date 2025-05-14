@@ -9,7 +9,7 @@ import {
   UpdateEventDto,
   UpdateEventZod,
 } from "@/types";
-import { extractLanguage, HTTP_STATUS_CODE, TryCatchController } from "@/utils";
+import { decodeToken, extractLanguage, extractToken, HTTP_STATUS_CODE, TryCatchController } from "@/utils";
 import { Request, Response } from "express";
 
 export class EventController {
@@ -32,8 +32,16 @@ export class EventController {
     @TryCatchController
     async getEvents(req: Request, res: Response) {
         const language = extractLanguage(req);
+        let userId: string | undefined;
+        try {
+            const token = extractToken(req);
+            const decoded = decodeToken(token);
+            userId = decoded.id;
+        } catch {
+            // PASS: unauthenticated user
+        }
         const pagination: PaginationQueryDto = PaginationQueryZod.parse(req.query);
-        const response = await eventService.getEvents(language, pagination);
+        const response = await eventService.getEvents(language, pagination, userId);
         res.status(HTTP_STATUS_CODE.OK).json(response);
     }
 
@@ -41,9 +49,18 @@ export class EventController {
     async getEvent(req: Request, res: Response) {
         const id: IdParamDto = IdParamZod.parse(req.params.id);
         const language = extractLanguage(req);
-        const response = await eventService.getEvent(id, language);
+        let userId: string | undefined;
+        try {
+            const token = extractToken(req);
+            const decoded = decodeToken(token);
+            userId = decoded.id;
+        } catch {
+            // PASS: unauthenticated user
+        }
+        const response = await eventService.getEvent(id, language, userId);
         res.status(HTTP_STATUS_CODE.OK).json(response);
     }
+    
 
     @TryCatchController
     async updateEvent(req: Request, res: Response) {

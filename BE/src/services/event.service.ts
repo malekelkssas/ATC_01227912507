@@ -1,5 +1,5 @@
-import { eventRepository } from "@/repository";
-import { CreateEventDto, CreateEventResponseDto, GetEventResponseDto, IEvent, ITag, LanguageEnum, PaginationQueryDto, UpdateEventDto, PaginationResponseDto } from "@/types";
+import { eventRepository, userRepository } from "@/repository";
+import { CreateEventDto, CreateEventResponseDto, GetEventResponseDto, IEvent, ITag, LanguageEnum, PaginationQueryDto, UpdateEventDto, PaginationResponseDto, GetFullEventResponseDto } from "@/types";
 import { TagService } from "./tag.service";
 import { NotFoundError, transformToDotNotation } from "@/utils";
 
@@ -21,14 +21,19 @@ export class EventService {
         const result = await eventRepository.delete(id);
         return result;
     }
-    async getEvents(language: LanguageEnum, pagination: PaginationQueryDto): Promise<PaginationResponseDto<GetEventResponseDto>> {
+    async getEvents(language: LanguageEnum, pagination: PaginationQueryDto, userId?: string): Promise<PaginationResponseDto<GetEventResponseDto | GetFullEventResponseDto>> {
         const { data: events, total } = await eventRepository.findWithPagination({}, pagination);
         
         const totalPages = Math.ceil(total / pagination.limit);
         const hasMore = pagination.page < totalPages - 1;
-
+        let data = events.map((event) => EventService.localizeEvent(event, language));
+        if (userId) {
+            const eventsIds = data.map((event) => event._id.toString());
+            const bookedEvents = await userRepository.getBookedEventsFromIds(userId, eventsIds);
+            data = data.map((event) => ({ ...event, isBooked: bookedEvents.has(event._id.toString()) }));
+        }
         return {
-            data: events.map((event) => EventService.localizeEvent(event, language)),
+            data,
             pagination: {
                 page: pagination.page,
                 limit: pagination.limit,
@@ -39,12 +44,17 @@ export class EventService {
         };
     }
 
-    async getEvent(id: string, language: LanguageEnum): Promise<GetEventResponseDto> {
+    async getEvent(id: string, language: LanguageEnum, userId?: string): Promise<GetEventResponseDto | GetFullEventResponseDto> {
         const event = await eventRepository.findById(id);
         if (!event) {
             throw new NotFoundError("Event not found");
         }
-        return EventService.localizeEvent(event, language);
+        let data = EventService.localizeEvent(event, language);
+        if (userId) {
+            const bookedEvents = await userRepository.getBookedEventsFromIds(userId, [id]);
+            data = { ...data, isBooked: bookedEvents.has(id) } as GetFullEventResponseDto;
+        }
+        return data;
     }
 
     async updateEvent(id: string, data: UpdateEventDto): Promise<UpdateEventDto> {
