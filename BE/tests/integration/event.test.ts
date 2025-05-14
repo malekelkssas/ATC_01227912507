@@ -212,7 +212,6 @@ describe('Event APIs', () => {
             expect(body.category.length).toBe(1);
             expect(body.category[0].name.en).toBe((tags[0] as ITag).name.en);
             expect(body.venue.en).toBe(eventData.venue.en);
-            // Check if imageUrl matches the expected pattern
             expect(body.imageUrl).toMatch(new RegExp(
                 `^${UPLOAD_IMAGES_CONSTANTS.IMAGE_PATH}event-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\.(jpg|jpeg|png|webp)$`,
                 'i'

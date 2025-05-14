@@ -108,10 +108,10 @@ export type GetEventResponseDto = z.infer<typeof GetEventResponseZod>;
 // Get Events for authenticated user
 export const GetFullEventResponseZod = z.object({
     _id: z.string(),
-    name: LanguageZod,
-    description: LanguageZod,
+    name: z.string(),
+    description: z.string(),
     category: z.array(GetTagResponseZod),
-    venue: LanguageZod,
+    venue: z.string(),
     imageUrl: z.string(),
     price: z.number(),
     date: z.date(),

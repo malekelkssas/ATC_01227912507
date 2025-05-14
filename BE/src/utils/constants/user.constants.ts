@@ -6,6 +6,9 @@ export const USER_FIELDS = {
   EMAIL: 'email',
   PASSWORD: 'password',
   ROLE: 'role',
+  BOOKED_EVENTS: 'bookedEvents',
+  CREATED_AT: 'createdAt',
+  UPDATED_AT: 'updatedAt',
 } as const;
 
 export const USER_ROLES = {

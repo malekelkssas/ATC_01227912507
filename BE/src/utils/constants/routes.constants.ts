@@ -17,6 +17,10 @@ export const ROUTES = {
     SIGN_UP: "sign-up",
     REFRESH_TOKEN: "refresh-token",
     ME: "me",
+    BOOK_EVENT: "book-event",
+    UNBOOK_EVENT: "unbook-event",
+    GET_BOOKED_EVENTS: "get-booked-events",
+
 
     /**
      * Tag Routes

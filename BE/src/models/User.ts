@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 import { UserRoleEnum, IUser, MongooseHooksEnum } from "@/types";
-import { USER_SCHEMA_NAME, USER_FIELDS } from "@/utils";
+import { USER_SCHEMA_NAME, USER_FIELDS, EVENT_SCHEMA_NAME } from "@/utils";
 import bcrypt from "bcrypt";
 
 export const UserSchema = new Schema<IUser>(
@@ -32,6 +32,11 @@ export const UserSchema = new Schema<IUser>(
       },
       default: UserRoleEnum.USER,
       required: [true, "Role is required"],
+    },
+    bookedEvents: {
+      type: [Schema.Types.ObjectId],
+      ref: EVENT_SCHEMA_NAME,
+      unique: [true, "Event already booked"],
     },
   },
   {

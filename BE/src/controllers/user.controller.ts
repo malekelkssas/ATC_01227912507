@@ -1,6 +1,8 @@
 import { userService } from '@/services';
-import { CreateUserDto, CreateUserResponseDto, CreateUserZod, IJwtUser, SignInDto, SignInResponseDto, SignInZod } from '@/types';
-import { extractToken, HTTP_STATUS_CODE, TryCatchController } from '@/utils';
+import { CreateUserDto, CreateUserResponseDto, CreateUserZod, 
+    IdParamDto, IdParamZod, IJwtUser, LanguageEnum, PaginationQueryDto,
+     PaginationQueryZod, SignInDto, SignInResponseDto, SignInZod } from '@/types';
+import { extractLanguage, extractToken, HTTP_STATUS_CODE, TryCatchController } from '@/utils';
 import { Request, Response } from 'express';
 
 export class UserController {
@@ -39,6 +41,31 @@ export class UserController {
     async refreshToken (req: Request, res: Response) {
         const token = extractToken(req);
         const response = await userService.refreshToken(token);
+        res.status(HTTP_STATUS_CODE.OK).json(response);
+    }
+
+    @TryCatchController
+    async addEventToBookedEvents(req: Request, res: Response) {
+        const user: IJwtUser = req.user as IJwtUser;
+        const eventId: IdParamDto = IdParamZod.parse(req.params.id);
+        await userService.addEventToBookedEvents(user.id, eventId);
+        res.status(HTTP_STATUS_CODE.NO_CONTENT).send();
+    }
+
+    @TryCatchController
+    async removeEventFromBookedEvents(req: Request, res: Response) {
+        const user: IJwtUser = req.user as IJwtUser;
+        const eventId: IdParamDto = IdParamZod.parse(req.params.id);
+        await userService.removeEventFromBookedEvents(user.id, eventId);
+        res.status(HTTP_STATUS_CODE.NO_CONTENT).send();
+    }
+
+    @TryCatchController
+    async getBookedEvents(req: Request, res: Response) {
+        const language: LanguageEnum = extractLanguage(req);
+        const user: IJwtUser = req.user as IJwtUser;
+        const pagination: PaginationQueryDto = PaginationQueryZod.parse(req.query);
+        const response = await userService.getBookedEvents(user.id, language, pagination);
         res.status(HTTP_STATUS_CODE.OK).json(response);
     }
 }

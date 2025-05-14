@@ -1,9 +1,10 @@
 import { config } from "@/config";
 import { userRepository } from "@/repository";
-import { CreateUserDto, CreateUserResponseDto, GetUserResponseDto, IJwtUser, RefreshTokenResponseDto, SignInDto, SignInResponseDto } from "@/types";
+import { CreateUserDto, CreateUserResponseDto, GetEventResponseDto, GetFullEventResponseDto, GetFullEventsResponseDto, GetUserResponseDto, IJwtUser, LanguageEnum, PaginationQueryDto, PaginationResponseDto, RefreshTokenResponseDto, SignInDto, SignInResponseDto } from "@/types";
 import { generateRefreshToken, generateToken, NotFoundError, UnauthorizedError } from "@/utils";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { EventService } from "./event.service";
 
 export class UserService {
     private static userService: UserService;
@@ -80,5 +81,38 @@ export class UserService {
         return {
             token,
         } as RefreshTokenResponseDto;
+    }
+
+    addEventToBookedEvents = async (userId: string, eventId: string): Promise<boolean> => {
+        const user = await userRepository.addEventToBookedEvents(userId, eventId);
+        if (!user) {
+            throw new NotFoundError("User not found");
+        }
+        return true;
+    }
+
+    removeEventFromBookedEvents = async (userId: string, eventId: string): Promise<boolean> => {
+        const user = await userRepository.removeEventFromBookedEvents(userId, eventId);
+        if (!user) {
+            throw new NotFoundError("User not found");
+        }
+        return true;
+    }
+
+    getBookedEvents = async (userId: string, language: LanguageEnum, pagination: PaginationQueryDto): Promise<PaginationResponseDto<GetEventResponseDto>> => {
+        const { data: events, total } = await userRepository.getBookedEvents(userId, pagination);
+        
+        const totalPages = Math.ceil(total / pagination.limit);
+        const hasMore = pagination.page < totalPages - 1;
+        return {
+            data: events.map((event) => EventService.localizeEvent(event, language)),
+            pagination: {
+                page: pagination.page,
+                limit: pagination.limit,
+                total,
+                hasMore,
+                totalPages,
+            }
+        }
     }
 }
