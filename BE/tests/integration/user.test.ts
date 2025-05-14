@@ -106,7 +106,7 @@ describe("User APIs", () => {
             const updatedUser = await User.findOne({ email: UserFixture.userData.email! });
             expect(updatedUser?.bookedEvents?.length).toBe(user?.bookedEvents?.length! - 1);
         });
-        
+
         it("should return 400 if event id is invalid", async () => {
             // Arrange
             const signInDto: SignInDto = {
@@ -137,6 +137,39 @@ describe("User APIs", () => {
 
             // Assert
             expect(response.status).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
+        });
+    });
+
+    describe("Get Booked Events API", () => {
+        it("should return 200 if user is authenticated", async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.userData.email!,
+                password: UserFixture.userData.password!
+            };
+            const { token } = await login(signInDto);
+
+            // Act
+            const response = await request(app)
+                .get(getBookedEventsRoute)
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.OK);
+            expect(response.body.data.length).toBeGreaterThan(0);
+        });
+
+        it("should return 401 if user is not authenticated", async () => {
+            // Arrange
+            // PASS: no need to arrange
+
+            // Act
+            const response = await request(app)
+                .get(getBookedEventsRoute);
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
+            expect(response.body.message).toBe("Invalid token");
         });
     });
 });

@@ -5,8 +5,8 @@ import { login } from '@tests/utils';
 import { HTTP_HEADERS, HTTP_STATUS_CODE, JWT_CONSTANTS, ROUTES } from '@/utils';
 import { Event, Tag } from '@/models';
 import { UserFixture } from '@tests/fixtures';
-import { CreateEventDto, CreateEventResponseDto, GetEventResponseDto, ITag, PaginationQueryDto, PaginationResponseDto, SignInDto, UpdateEventDto } from '@/types';
-import mongoose from 'mongoose';
+import { CreateEventDto, CreateEventResponseDto, GetEventResponseDto, GetFullEventResponseDto, ITag, PaginationQueryDto, PaginationResponseDto, SignInDto, UpdateEventDto } from '@/types';
+import mongoose, { set } from 'mongoose';
 import path from 'path';
 import fs from 'fs';
 import { UPLOAD_IMAGES_CONSTANTS } from '@/utils/constants/upload-images.constants';
@@ -24,7 +24,7 @@ function createTestImage() {
 
 describe('Event APIs', () => {
     describe('Get Events/Event API', () => {
-        it('should return all events successfully', async () => {
+        it('should return all events successfully (unauthenticated)', async () => {
             // Arrange
             const pagination: PaginationQueryDto = {
                 page: 0,
@@ -38,12 +38,43 @@ describe('Event APIs', () => {
             // Act
             const response = await request(app)
                 .get(`${eventsRoute}?${queryString}`);
-            const body: PaginationResponseDto<GetEventResponseDto> = response.body;
+            const body: PaginationResponseDto<GetEventResponseDto | GetFullEventResponseDto> = response.body;
 
             // Assert
             expect(response.status).toBe(HTTP_STATUS_CODE.OK);
             expect(body.data.length).toBe(3);
             expect(body.pagination.hasMore).toBe(false);
+            expect((body.data[0] as GetFullEventResponseDto)?.isBooked).toBeUndefined();
+        });
+
+        it('should return all events successfully (authenticated)', async () => {
+            // Arrange
+            const signInDto: SignInDto = {
+                email: UserFixture.userData.email!,
+                password: UserFixture.userData.password!
+            };
+            const { token } = await login(signInDto);
+            const pagination: PaginationQueryDto = {
+                page: 0,
+                limit: 10
+            };
+            const queryString = new URLSearchParams({
+                page: pagination.page.toString(),
+                limit: pagination.limit.toString()
+            }).toString();
+
+            // Act
+            const response = await request(app)
+                .get(`${eventsRoute}?${queryString}`)
+                .set(HTTP_HEADERS.AUTHORIZATION, `${JWT_CONSTANTS.BEARER_PREFIX} ${token}`);
+            const body: PaginationResponseDto<GetEventResponseDto | GetFullEventResponseDto> = response.body;
+
+            // Assert
+            expect(response.status).toBe(HTTP_STATUS_CODE.OK);
+            expect(body.data.length).toBe(3);
+            expect(body.pagination.hasMore).toBe(false);
+            expect((body.data as GetFullEventResponseDto[]).some((event: GetFullEventResponseDto) => event.isBooked)).toBe(true);
+
         });
 
         it('should return the events with pagination successfully', async () => {
@@ -338,16 +369,42 @@ describe('Event APIs', () => {
             const { token } = await login(signInDto);
             const createEventDto: CreateEventDto = {
                 name: {
-                    en: faker.lorem.word(),
-                    ar: faker.lorem.word()
+                    en: faker.lorem.word({
+                        length: {
+                            min: 3,
+                            max: 10
+                        }
+                    }),
+                    ar: faker.lorem.word({
+                        length: {
+                            min: 3,
+                            max: 10
+                        }
+                    }),
                 },
                 description: {
-                    en: faker.lorem.sentence(),
-                    ar: faker.lorem.sentence()
+                    en: faker.lorem.sentence({
+                        min: 10,
+                        max: 100
+                    }),
+                    ar: faker.lorem.sentence({
+                        min: 10,
+                        max: 100
+                    })
                 },
                 venue: {
-                    en: faker.lorem.word(),
-                    ar: faker.lorem.word()
+                    en: faker.lorem.word({
+                        length: {
+                            min: 3,
+                            max: 10
+                        }
+                    }),
+                    ar: faker.lorem.word({
+                        length: {
+                            min: 3,
+                            max: 10
+                        }
+                    })
                 },
                 category: [faker.string.uuid()],
                 imageUrl: faker.image.url(),
@@ -375,16 +432,42 @@ describe('Event APIs', () => {
             const { token } = await login(signInDto);
             const createEventDto: CreateEventDto = {
                 name: {
-                    en: faker.lorem.word(),
-                    ar: faker.lorem.word()
+                    en: faker.lorem.word({
+                        length: {
+                            min: 3,
+                            max: 10
+                        }
+                    }),
+                    ar: faker.lorem.word({
+                        length: {
+                            min: 3,
+                            max: 10
+                        }
+                    })
                 },
                 description: {
-                    en: faker.lorem.sentence(),
-                    ar: faker.lorem.sentence()
+                    en: faker.lorem.sentence({
+                        min: 10,
+                        max: 100
+                    }),
+                    ar: faker.lorem.sentence({
+                        min: 10,
+                        max: 100
+                    })
                 },
                 venue: {
-                    en: faker.lorem.word(),
-                    ar: faker.lorem.word()
+                    en: faker.lorem.word({
+                        length: {
+                            min: 3,
+                            max: 10
+                        }
+                    }),
+                    ar: faker.lorem.word({
+                        length: {
+                            min: 3,
+                            max: 10
+                        }
+                    })
                 },
                 category: [faker.string.uuid()],
                 imageUrl: faker.image.url(),
@@ -448,7 +531,12 @@ describe('Event APIs', () => {
             const eventId = events[0]._id.toString();
             const updateEventDto: UpdateEventDto = {
                 name: {
-                    en: faker.lorem.word(),
+                    en: faker.lorem.word({
+                        length: {
+                            min: 3,
+                            max: 10
+                        }
+                    }),
                 }
             }
 
