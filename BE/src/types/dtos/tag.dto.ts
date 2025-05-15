@@ -53,7 +53,9 @@ export const GetFullTagsResponseZod = z.object({
     color: z.string(),
 });
 
-export type GetFullTagsResponseDto = z.infer<typeof GetFullTagsResponseZod>;
+export const GetFullTagsResponseArrayZod = z.array(GetFullTagsResponseZod);
+
+export type GetFullTagsResponseDto = z.infer<typeof GetFullTagsResponseArrayZod>;
 
 
 // Update Tag

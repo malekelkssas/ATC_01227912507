@@ -124,6 +124,7 @@ export const GetFullEventsResponseZod = z.array(GetFullEventResponseZod);
 
 export type GetFullEventsResponseDto = z.infer<typeof GetFullEventsResponseZod>;
 
+// Update Events
 export const UpdateEventZod = z.object({
     name: z.object({
         en: z.string({

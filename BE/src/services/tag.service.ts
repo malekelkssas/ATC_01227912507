@@ -21,7 +21,7 @@ export class TagService {
         return tags.map((tag) => TagService.localizeTag(tag, language));
     }
 
-    async getFullTags(): Promise<GetFullTagsResponseDto[]> {
+    async getFullTags(): Promise<GetFullTagsResponseDto> {
         const tags = await tagRepository.find({});
         return tags;
     }

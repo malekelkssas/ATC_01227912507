@@ -23,6 +23,6 @@ export const GetFullTagsResponseZod = z.object({
     color: z.string(),
 });
 
-export const GetFullTagsResponseType = z.array(GetFullTagsResponseZod);
+export const GetFullTagsResponseArrayZod = z.array(GetFullTagsResponseZod);
 
-export type GetFullTagsResponseDto = z.infer<typeof GetFullTagsResponseType>;
+export type GetFullTagsResponseDto = z.infer<typeof GetFullTagsResponseArrayZod>;
