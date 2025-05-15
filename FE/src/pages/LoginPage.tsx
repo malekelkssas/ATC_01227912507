@@ -8,13 +8,17 @@ import LoginForm from '@/components/pages/auth/LoginForm';
 import { useToast } from "@/hooks/use-toast";
 import { ToastVariantsConstants } from '@/utils/constants';
 import { UserService } from '@/api/services';
-import type { SignInDto } from '@/types/dtos';
+import type { SignInDto, SignInResponseDto } from '@/types/dtos';
+import { setAuth } from '@/store/slices';
+import { useAppDispatch } from '@/store';
 
 const LoginPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useAppDispatch();
+  
   
 
   useEffect(() => {
@@ -23,8 +27,6 @@ const LoginPage: React.FC = () => {
       try {
         await UserService.getMe();
         navigate(PagesRoutesConstants.EVENTS);
-      } catch {
-        // PASS
       } finally {
         setIsLoading(false);
       }
@@ -35,7 +37,9 @@ const LoginPage: React.FC = () => {
   const handleLoginSuccess = async (data: SignInDto) => {
     setIsLoading(true);
     try {
-      await UserService.signIn(data);
+      const response = await UserService.signIn(data);
+      const responseData = response as SignInResponseDto;
+      dispatch(setAuth(responseData));
       toast({
         title: t(TranslationConstants.COMMON.MESSAGES.SUCCESS),
         description: t(TranslationConstants.AUTH.LOGIN_SUCCESS),

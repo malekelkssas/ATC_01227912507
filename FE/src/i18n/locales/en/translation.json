@@ -37,8 +37,14 @@
       "error": "Error!"
     }
   },
+  "events": {
+    "get_events_failed": "Failed to get events",
+    "booked": "Booked"
+  },
   "validation": {
     "required": {
+      "page": "Page is required",
+      "limit": "Limit is required",
       "email": "Email is required",
       "password": "Password is required",
       "name": "Name is required"

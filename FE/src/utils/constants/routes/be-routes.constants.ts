@@ -5,4 +5,11 @@ export class BeRoutesConstants {
     static readonly SIGN_UP = 'sign-up';
     static readonly ME = 'me';
     static readonly REFRESH_TOKEN = 'refresh-token';
+
+    // Event routes
+    static readonly EVENTS = "events";
+
+    // Tag routes
+    static readonly TAGS = "tags";
+    static readonly FULL_TAGS = "full";
 }

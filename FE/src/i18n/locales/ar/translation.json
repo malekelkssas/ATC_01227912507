@@ -24,6 +24,10 @@
         "dont_have_account": "ليس لديك حساب؟",
         "sign_up_link": "إنشاء حساب"
     },
+    "events": {
+        "get_events_failed": "فشل جلب الفعاليات",
+        "booked": "محجوز"
+    },
     "common": {
         "loading": "جاري التحميل...",
         "buttons": {
@@ -38,6 +42,8 @@
     },
     "validation": {
         "required": {
+            "page": "الصفحة مطلوبة",
+            "limit": "الحد مطلوب",
             "email": "البريد الإلكتروني مطلوب",
             "password": "كلمة المرور مطلوبة",
             "name": "الاسم مطلوب"

@@ -75,7 +75,7 @@ const Navbar: React.FC = () => {
                 </Button>
               </div>
             ) : !isLoginPage && (
-              <Link to="/login">
+              <Link to={PagesRoutesConstants.SIGN_IN}>
                 <Button
                   className="bg-duck-yellow hover:bg-duck-yellow/80 text-duck-brown"
                 >
@@ -102,8 +102,7 @@ const Navbar: React.FC = () => {
       <div ref={menuRef} className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} transition-all duration-300`}>
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white dark:bg-duck-brown/10 shadow-lg">
           <div className="flex flex-col space-y-2">
-            {/* TODO: Use the pages constants */}
-            <Link to="/events" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-duck-yellow/10">
+            <Link to={PagesRoutesConstants.EVENTS} className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-duck-yellow/10">
               {t(TranslationConstants.NAV.EVENTS)}
             </Link>
 
@@ -130,7 +129,7 @@ const Navbar: React.FC = () => {
                   {t(TranslationConstants.NAV.LOGOUT)}
                 </Button>
               ) : !isLoginPage && (
-                <Link to="/login">
+                <Link to={PagesRoutesConstants.SIGN_IN}>
                   <Button
                     className="bg-duck-yellow hover:bg-duck-yellow/80 text-duck-brown"
                   >

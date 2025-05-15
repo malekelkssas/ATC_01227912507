@@ -28,6 +28,11 @@ export class TranslationConstants {
     LOGIN: 'nav.login',
   } as const;
 
+  static readonly EVENTS = {
+    GET_EVENTS_FAILED: 'events.get_events_failed',
+    BOOKED: 'events.booked',
+  } as const;
+
   static readonly COMMON = {
     LOADING: 'common.loading',
     BUTTONS: {
@@ -43,6 +48,8 @@ export class TranslationConstants {
 
   static readonly VALIDATION = {
     REQUIRED: {
+      PAGE: 'validation.required.page',
+      LIMIT: 'validation.required.limit',
       EMAIL: 'validation.required.email',
       PASSWORD: 'validation.required.password',
       NAME: 'validation.required.name',

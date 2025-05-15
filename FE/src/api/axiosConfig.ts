@@ -2,47 +2,32 @@ import axios from "axios";
 import { store, type RootState } from "@/store";
 import { logout } from "@/utils/auth/logout";
 import { setToken } from "@/store/slices";
-import { BeRoutesConstants, PagesRoutesConstants } from "@/utils/constants";
+import { PagesRoutesConstants } from "@/utils/constants";
 import { UserService } from "./services";
 import type { RefreshTokenResponseDto } from "@/types";
-
-const publicEndpoints = [
-  `/${BeRoutesConstants.USERS}/${BeRoutesConstants.SIGN_IN}`,
-  `/${BeRoutesConstants.USERS}/${BeRoutesConstants.SIGN_UP}`,
-];
-const refreshTokenEndpoint = `/${BeRoutesConstants.USERS}/${BeRoutesConstants.REFRESH_TOKEN}`;
+import i18n from "@/i18n/i18n";
+import { HTTP_HEADERS } from "@/utils/constants/http/http-headers.constants";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL
 });
 
+// TODO: Should include the Admin Routes
+const privatePagesRoutes = []
+
 api.interceptors.request.use(
   (config) => {
     // Skip token check for public endpoints
-    if (
-      publicEndpoints.includes(config.url || "") ||
-      config.url === refreshTokenEndpoint
-    ) {
-      return config;
-    }
 
     let token = null;
     try {
       const state: RootState = store.getState();
       token = state.auth.token;
-    } catch {
-      logout();
+    } finally {
+      config.headers.Authorization = `Bearer ${token || ""}`;
+      config.headers[HTTP_HEADERS.ACCEPT_LANGUAGE] = i18n.language;
     }
-
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    } else {
-      // If no token is available for protected routes, reject the request
-      if (window.location.pathname !== PagesRoutesConstants.SIGN_IN) {
-        logout();
-      }
-      return Promise.reject(new Error("No authentication token available"));
-    }
+    
 
     return config;
   },
@@ -56,13 +41,6 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Skip refresh token logic for public endpoints
-    if (
-      originalRequest &&
-      publicEndpoints.includes(originalRequest.url || "")
-    ) {
-      return Promise.reject(error);
-    }
     const state: RootState = store.getState();
 
     // If error is 401 and we haven't tried to refresh token yet
@@ -90,6 +68,13 @@ api.interceptors.response.use(
       } catch (refreshError) {
         // If refresh token fails, log out user
         logout();
+        const privatePagesRoutes: string[] = [];
+        if (
+          window.location.pathname !== PagesRoutesConstants.SIGN_IN &&
+          !privatePagesRoutes.includes(window.location.pathname)
+        ) {
+          window.location.href = PagesRoutesConstants.EVENTS;
+        }
         return Promise.reject(refreshError);
       }
     }

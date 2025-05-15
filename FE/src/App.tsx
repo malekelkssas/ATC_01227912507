@@ -11,6 +11,7 @@ import LoginPage from './pages/LoginPage';
 import NotFound from './pages/NotFound';
 import EventList from './pages/EventList';
 import SignUp from './pages/SignUp';
+import Index from './pages/index';
 
 import { PagesRoutesConstants } from '@/utils/constants';
 function App() {
@@ -26,6 +27,7 @@ function App() {
               <Route path={PagesRoutesConstants.SIGN_UP} element={<SignUp />} />
               <Route path={PagesRoutesConstants.NOT_FOUND} element={<NotFound />} />
               <Route path={PagesRoutesConstants.EVENTS} element={<EventList />} />
+              <Route path={PagesRoutesConstants.HOME} element={<Index />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
