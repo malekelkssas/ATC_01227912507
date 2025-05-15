@@ -34,12 +34,29 @@
     },
     "messages": {
       "success": "Success!",
-      "error": "Error!"
+      "error": "Error!",
+      "not_found": "Oops! Page not found",
+      "success_description": "Your action was completed successfully."
     }
   },
   "events": {
     "get_events_failed": "Failed to get events",
-    "booked": "Booked"
+    "booked": "Booked",
+    "details": "Details",
+    "get_event_failed": "Failed to get event",
+    "book_event_failed": "Failed to book event",
+    "unbook_event_failed": "Failed to unbook event",
+    "price": "Price",
+    "date": "Date",
+    "time": "Time",
+    "booking_title": "Booking",
+    "book": "Book",
+    "unbook": "Unbook",
+    "all_events": "All Events",
+    "description": "Description",
+    "location": "Location",
+    "book_event_success": "Event booked successfully",
+    "unbook_event_success": "Event unbooked successfully"
   },
   "validation": {
     "required": {

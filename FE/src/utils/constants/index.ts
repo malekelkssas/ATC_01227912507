@@ -4,3 +4,4 @@ export * from './nodeEnv';
 export * from './routes';
 export * from './toast';
 export * from './forms';
+export * from './http';

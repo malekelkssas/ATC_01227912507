@@ -30,7 +30,21 @@ export class TranslationConstants {
 
   static readonly EVENTS = {
     GET_EVENTS_FAILED: 'events.get_events_failed',
+    GET_EVENT_FAILED: 'events.get_event_failed',
+    BOOK_EVENT_FAILED: 'events.book_event_failed',
     BOOKED: 'events.booked',
+    DETAILS: 'events.details',
+    DESCRIPTION: 'events.description',
+    LOCATION: 'events.location',
+    PRICE: 'events.price',
+    DATE: 'events.date',
+    TIME: 'events.time',
+    BOOKING_TITLE: 'events.booking_title',
+    BOOK: 'events.book',
+    UNBOOK: 'events.unbook',
+    ALL_EVENTS: 'events.all_events',
+    BOOK_EVENT_SUCCESS: 'events.book_event_success',
+    UNBOOK_EVENT_SUCCESS: 'events.unbook_event_success',
   } as const;
 
   static readonly COMMON = {
@@ -43,6 +57,8 @@ export class TranslationConstants {
     MESSAGES: {
       SUCCESS: 'common.messages.success',
       ERROR: 'common.messages.error',
+      NOT_FOUND: 'common.messages.not_found',
+      SUCCESS_DESCRIPTION: 'common.messages.success_description',
     },
   } as const;
 

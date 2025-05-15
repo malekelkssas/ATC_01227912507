@@ -3,7 +3,7 @@ import { UserService } from '@/api/services';
 import { Link, useNavigate } from 'react-router-dom';
 import { type ErrorResponse } from '@/types';
 import { PagesRoutesConstants, ToastVariantsConstants, TranslationConstants } from '@/utils/constants';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/useToast';
 import { type CreateUserDto, type CreateUserInputDto } from '@/types/dtos';
 import { useTranslation } from 'react-i18next';
 import Layout from '@/components/layout/Layout';

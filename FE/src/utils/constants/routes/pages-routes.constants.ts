@@ -5,5 +5,7 @@ export class PagesRoutesConstants {
   static readonly ADMIN_DASHBOARD = '/admin';
   static readonly USER_DASHBOARD = '/dashboard';
   static readonly EVENTS = '/events';
+  static readonly EVENT_DETAILS = '/events/:id';
   static readonly NOT_FOUND = '*';
+  static readonly SUCCESS = '/success';
 }

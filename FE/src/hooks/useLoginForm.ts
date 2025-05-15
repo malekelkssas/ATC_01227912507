@@ -3,7 +3,7 @@ import { UserService } from '@/api/services/user.service';
 import { type SignInDto, type SignInResponseDto, SignInZod } from '@/types/dtos';
 import { z } from 'zod';
 import type { ErrorResponse } from '@/types';
-import { useToast } from './use-toast';
+import { useToast } from './useToast';
 import { ToastVariantsConstants, TranslationConstants } from '@/utils/constants';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from '@/store';

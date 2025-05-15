@@ -26,7 +26,22 @@
     },
     "events": {
         "get_events_failed": "فشل جلب الفعاليات",
-        "booked": "محجوز"
+        "booked": "محجوز",
+        "details": "التفاصيل",
+        "description": "الوصف",
+        "location": "الموقع",
+        "get_event_failed": "فشل جلب الفعالية",
+        "book_event_failed": "فشل حجز التذاكر",
+        "unbook_event_failed": "فشل إلغاء الحجز",
+        "price": "السعر",
+        "date": "التاريخ",
+        "time": "الوقت",
+        "booking_title": "الحجز",
+        "book": "حجز",
+        "unbook": "إلغاء الحجز",
+        "all_events": "الفعاليات",
+        "book_event_success": "تم حجز التذاكر بنجاح",
+        "unbook_event_success": "تم إلغاء الحجز بنجاح"
     },
     "common": {
         "loading": "جاري التحميل...",
@@ -37,7 +52,9 @@
         },
         "messages": {
             "success": "تم بنجاح!",
-            "error": "خطأ!"
+            "error": "خطأ!",
+            "not_found": "الصفحة غير موجودة",
+            "success_description": "تم إكمال العملية بنجاح"
         }
     },
     "validation": {

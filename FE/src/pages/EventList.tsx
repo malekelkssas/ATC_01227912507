@@ -12,7 +12,7 @@ import { type ErrorResponse } from '@/types';
 import type { GetTagsResponseDto, PaginationResponseDto , GetEventResponseDto, GetFullEventResponseDto, PaginationQueryDto } from "@/types/dtos";
 import { ToastVariantsConstants } from '@/utils/constants';
 import { TranslationConstants } from '@/utils/constants';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/useToast';
 import { useTranslation } from 'react-i18next';
 import { useLanguageChange } from '@/hooks/useLanguageChange';
 import { useAuthChange } from '@/hooks/useAuthChange';

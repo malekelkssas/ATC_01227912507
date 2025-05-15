@@ -6,6 +6,7 @@ const initialState: AuthState = {
   user: null,
   token: null,
   refreshToken: null,
+  isLoginModalOpen: false,
 };
 
 const authSlice = createSlice({
@@ -31,9 +32,16 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.refreshToken = null;
+      state.isLoginModalOpen = false;
+    },
+    openLoginModal: (state) => {
+      state.isLoginModalOpen = true;
+    },
+    closeLoginModal: (state) => {
+      state.isLoginModalOpen = false;
     },
   },
 });
 
-export const { setUser, setToken, setRefreshToken, setAuth, removeUser } = authSlice.actions;
+export const { setUser, setToken, setRefreshToken, setAuth, removeUser, openLoginModal, closeLoginModal } = authSlice.actions;
 export default authSlice.reducer;

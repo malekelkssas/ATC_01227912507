@@ -11,7 +11,7 @@ import { UserRoleEnum } from '@/types';
 import { Button } from '../ui/button';
 import { logout } from '@/utils/auth/logout';
 import Logo from '../shared/Logo';
-import useClickOutside from '@/hooks/use-click-outside';
+import useClickOutside from '@/hooks/useClickOutside';
 
 const Navbar: React.FC = () => {
   const { t } = useTranslation();

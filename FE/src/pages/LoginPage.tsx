@@ -5,7 +5,7 @@ import Layout from '../components/layout/Layout';
 import { PagesRoutesConstants, TranslationConstants } from '@/utils/constants';
 import Logo from '@/components/shared/Logo';
 import LoginForm from '@/components/pages/auth/LoginForm';
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/useToast";
 import { ToastVariantsConstants } from '@/utils/constants';
 import { UserService } from '@/api/services';
 import type { SignInDto, SignInResponseDto } from '@/types/dtos';

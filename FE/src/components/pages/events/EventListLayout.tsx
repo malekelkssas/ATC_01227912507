@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import type { GetEventResponseDto, GetFullEventResponseDto } from "@/types";
 import { useTranslation } from "react-i18next";
-import { TranslationConstants } from "@/utils/constants";
+import { PagesRoutesConstants, TranslationConstants } from "@/utils/constants";
 import { formatDate } from "@/utils/date";
 import EventImage from "@/components/shared/EventImage";
 
@@ -53,18 +53,19 @@ const EventListLayout: React.FC<EventListLayoutProps> = ({ events }) => {
                 {event.category.map(tag => (
                   <span
                     key={tag._id}
-                    className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium dark:text-white"
-                    style={{ backgroundColor: tag.color }}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border border-duck-yellow/40 bg-duck-yellow/10 dark:bg-duck-brown/30 dark:text-white transition-colors duration-200 hover:bg-duck-yellow/30"
+                    style={{ color: tag.color, borderColor: tag.color }}
                   >
+                    <span className="w-2 h-2 rounded-full inline-block mr-1" style={{ backgroundColor: tag.color }} />
                     {tag.name}
                   </span>
                 ))}
               </div>
               <Button
-                onClick={() => navigate(`/events/${event._id}`)}
+                onClick={() => navigate(`${PagesRoutesConstants.EVENTS}/${event._id}`)}
                 className="bg-duck-yellow hover:bg-duck-yellow/80 text-duck-brown px-4 py-1 text-xs"
               >
-                Details
+                {t(TranslationConstants.EVENTS.DETAILS)}
               </Button>
             </CardFooter>
           </div>
