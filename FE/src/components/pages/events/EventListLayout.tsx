@@ -6,6 +6,7 @@ import type { GetEventResponseDto, GetFullEventResponseDto } from "@/types";
 import { useTranslation } from "react-i18next";
 import { TranslationConstants } from "@/utils/constants";
 import { formatDate } from "@/utils/date";
+import EventImage from "@/components/shared/EventImage";
 
 interface EventListLayoutProps {
   events: GetEventResponseDto[] | GetFullEventResponseDto[];
@@ -30,7 +31,7 @@ const EventListLayout: React.FC<EventListLayoutProps> = ({ events }) => {
                 </span>
               </div>
             )}
-            <span className="text-3xl">🦆</span>
+            <EventImage src={`${import.meta.env.VITE_IMAGES_API_URL}${event.imageUrl}`} alt={event.name} />
           </div>
           {/* Content Section */}
           <div className="flex-1 flex flex-col justify-between p-4">

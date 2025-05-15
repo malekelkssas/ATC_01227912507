@@ -6,6 +6,7 @@ import type { GetEventResponseDto, GetFullEventResponseDto } from "@/types";
 import { useTranslation } from "react-i18next";
 import { TranslationConstants } from "@/utils/constants";
 import { formatDate } from "@/utils/date";
+import EventImage from "@/components/shared/EventImage";
 
 interface EventGridProps {
   events: GetEventResponseDto[] | GetFullEventResponseDto[];
@@ -28,7 +29,7 @@ const EventGrid: React.FC<EventGridProps> = ({ events }) => {
               </div>
             )}
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-4xl">🦆</span>
+              <EventImage src={`${import.meta.env.VITE_IMAGES_API_URL}${event.imageUrl}`} alt={event.name} />
             </div>
           </div>
           <CardHeader>

@@ -20,6 +20,7 @@ if (process.env.NODE_ENV === NODE_ENV.DEVELOPMENT) {
 
 const port = process.env.PORT || 3000;
 
+app.use(UPLOAD_IMAGES_CONSTANTS.BASE_PATH, express.static(path.join(__dirname, `..${UPLOAD_IMAGES_CONSTANTS.BASE_PATH}`)));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.json({ limit: "10kb" }));
 
@@ -37,8 +38,6 @@ app.use(
     credentials: true,
   })
 );
-
-app.use(UPLOAD_IMAGES_CONSTANTS.BASE_PATH, express.static(path.join(__dirname, `..${UPLOAD_IMAGES_CONSTANTS.BASE_PATH}`)));
 
 /**
  * @Error: express-mongo-sanitize is not working with query params -> TypeError: Cannot set property query of #<IncomingMessage> which has only a getter
