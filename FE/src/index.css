@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -76,6 +78,33 @@
   body {
     @apply bg-background text-foreground transition-colors duration-300;
     font-feature-settings: "rlig" 1, "calt" 1;
+    scrollbar-gutter: stable;
+  }
+
+  /* Custom scrollbar styles */
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 6px;
+    border: 3px solid hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+
+  .SelectContent {
+    overflow-y: auto;
+    scrollbar-gutter: stable;
   }
   
   /* RTL Support */
@@ -100,11 +129,43 @@
   .duck-card {
     @apply bg-white dark:bg-[#111] rounded-2xl shadow-md border border-duck-yellow/20 overflow-hidden transition-all;
   }
+
+  .duck-badge {
+    @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium shadow-sm transition-all;
+  }
+
+  .duck-badge-booked {
+    @apply bg-duck-yellow/90 text-duck-brown;
+  }
+
+  .duck-card-horizontal {
+    @apply flex flex-row overflow-hidden hover:shadow-2xl hover:shadow-black/10 dark:hover:shadow-duck-yellow/10 transition-all duration-300 border-duck-yellow/20;
+  }
+
+  .duck-card-image {
+    @apply w-48 h-48 bg-duck-water/20 dark:bg-duck-water/10 relative flex-shrink-0;
+  }
+
+  .duck-card-content {
+    @apply flex-1 flex flex-col;
+  }
+
+  .duck-card-footer {
+    @apply flex justify-between border-t border-duck-yellow/20;
+  }
 }
 
 @layer utilities {
   .animate-progress {
     animation: progress 3s linear forwards;
+  }
+
+  .card-shift-left {
+    @apply mr-auto;
+  }
+
+  .card-shift-right {
+    @apply ml-auto;
   }
 }
 

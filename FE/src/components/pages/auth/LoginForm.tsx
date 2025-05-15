@@ -1,70 +1,71 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { TranslationConstants } from '@/utils/constants';
-import { useLoginForm } from '@/hooks/useLoginForm';
+import { TranslationConstants, LoginFields } from '@/utils/constants';
+import { type SignInDto, SignInZod } from '@/types/dtos';
 import { Loader2 } from 'lucide-react';
 
 interface LoginFormProps {
-  onSuccess: () => void;
+  onLogin: (data: SignInDto) => Promise<void>;
+  isLoading: boolean;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
   const { t } = useTranslation();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   
-  const { isLoading, errors, handleSubmit } = useLoginForm(onSuccess);
-
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await handleSubmit({ email, password });
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInDto>({
+    resolver: zodResolver(SignInZod),
+    defaultValues: {
+      [LoginFields.EMAIL]: '',
+      [LoginFields.PASSWORD]: '',
+    }
+  });
 
   return (
-    <form className="w-full max-w-[320px] mx-auto space-y-6 px-4 sm:px-6 md:px-8" onSubmit={onSubmit}>
+    <form className="w-full max-w-[320px] mx-auto space-y-6 px-4 sm:px-6 md:px-8" onSubmit={handleSubmit(onLogin)}>
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+        <label htmlFor={LoginFields.EMAIL} className="block text-sm font-medium text-gray-700 dark:text-gray-200">
           {t(TranslationConstants.AUTH.EMAIL)}
         </label>
         <div className="mt-1">
           <Input
-            id="email"
-            name="email"
-            autoComplete="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            id={LoginFields.EMAIL}
+            type="email"
+            autoComplete={LoginFields.EMAIL}
+            {...register(LoginFields.EMAIL)}
             className={`border-duck-yellow/20 focus:border-duck-yellow focus:ring-duck-yellow ${
-              errors.email ? 'border-red-500' : ''
+              errors[LoginFields.EMAIL] ? 'border-red-500' : ''
             }`}
           />
-          {errors.email && (
-            <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+          {errors[LoginFields.EMAIL] && (
+            <p className="mt-1 text-sm text-red-500">{t(errors[LoginFields.EMAIL]?.message || '')}</p>
           )}
         </div>
       </div>
 
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+        <label htmlFor={LoginFields.PASSWORD} className="block text-sm font-medium text-gray-700 dark:text-gray-200">
           {t(TranslationConstants.AUTH.PASSWORD)}
         </label>
         <div className="mt-1">
           <Input
-            id="password"
-            name="password"
+            id={LoginFields.PASSWORD}
             type="password"
             autoComplete="current-password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            {...register(LoginFields.PASSWORD)}
             className={`border-duck-yellow/20 focus:border-duck-yellow focus:ring-duck-yellow ${
-              errors.password ? 'border-red-500' : ''
+              errors[LoginFields.PASSWORD] ? 'border-red-500' : ''
             }`}
           />
-          {errors.password && (
-            <p className="mt-1 text-sm text-red-500">{errors.password}</p>
+          {errors[LoginFields.PASSWORD] && (
+            <p className="mt-1 text-sm text-red-500">{t(errors[LoginFields.PASSWORD]?.message || '')}</p>
           )}
         </div>
       </div>

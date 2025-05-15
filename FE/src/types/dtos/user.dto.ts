@@ -24,7 +24,8 @@ export const CreateUserZod = z.object({
   role: z.literal(UserRoleEnum.USER).default(UserRoleEnum.USER),
 });
 
-export type CreateUserDto = z.infer<typeof CreateUserZod>;
+export type CreateUserInputDto = z.input<typeof CreateUserZod>;
+export type CreateUserDto = z.output<typeof CreateUserZod>;
 
 export const CreateUserResponseZod = z.object({
   success: z.literal(true),

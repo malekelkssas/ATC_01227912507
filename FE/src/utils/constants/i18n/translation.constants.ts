@@ -9,8 +9,15 @@ export class TranslationConstants {
     SIGNUP: 'auth.signup',
     PASSWORD: 'auth.password',
     EMAIL: 'auth.email',
+    NAME: 'auth.name',
     LOGIN_SUCCESS: 'auth.login_success',
     LOGIN_FAILED: 'auth.login_failed',
+    SIGNUP_SUCCESS: 'auth.signup_success',
+    SIGNUP_FAILED: 'auth.signup_failed',
+    ALREADY_HAVE_ACCOUNT: 'auth.already_have_account',
+    SIGN_IN_LINK: 'auth.sign_in_link',
+    DONT_HAVE_ACCOUNT: 'auth.dont_have_account',
+    SIGN_UP_LINK: 'auth.sign_up_link',
   } as const;
 
   static readonly NAV = {

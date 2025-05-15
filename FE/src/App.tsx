@@ -9,8 +9,10 @@ import { Route, Routes } from 'react-router-dom';
 import { BrowserRouter } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import NotFound from './pages/NotFound';
-import { PagesRoutesConstants } from '@/utils/constants';
+import EventList from './pages/EventList';
+import SignUp from './pages/SignUp';
 
+import { PagesRoutesConstants } from '@/utils/constants';
 function App() {
   return (
     <Provider store={store}>
@@ -21,7 +23,9 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path={PagesRoutesConstants.SIGN_IN} element={<LoginPage />} />
+              <Route path={PagesRoutesConstants.SIGN_UP} element={<SignUp />} />
               <Route path={PagesRoutesConstants.NOT_FOUND} element={<NotFound />} />
+              <Route path={PagesRoutesConstants.EVENTS} element={<EventList />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>

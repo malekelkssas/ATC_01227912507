@@ -11,11 +11,18 @@
     },
     "auth": {
         "login": "تسجيل الدخول",
-        "signup": "تسجيل الخروج",
+        "signup": "إنشاء حساب",
         "password": "كلمة المرور",
         "email": "البريد الإلكتروني",
+        "name": "الاسم",
         "login_success": "مرحباً بعودتك!",
-        "login_failed": "بريد إلكتروني أو كلمة مرور خاطئة"
+        "login_failed": "بريد إلكتروني أو كلمة مرور خاطئة",
+        "signup_success": "تم إنشاء الحساب بنجاح",
+        "signup_failed": "حدث خطأ أثناء إنشاء الحساب",
+        "already_have_account": "هل لديك حساب بالفعل؟",
+        "sign_in_link": "تسجيل الدخول",
+        "dont_have_account": "ليس لديك حساب؟",
+        "sign_up_link": "إنشاء حساب"
     },
     "common": {
         "loading": "جاري التحميل...",

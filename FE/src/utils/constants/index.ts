@@ -3,3 +3,4 @@ export * from './i18n';
 export * from './nodeEnv';
 export * from './routes';
 export * from './toast';
+export * from './forms';

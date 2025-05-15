@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Layout from '../components/layout/Layout';
 import { PagesRoutesConstants, TranslationConstants } from '@/utils/constants';
@@ -8,31 +8,43 @@ import LoginForm from '@/components/pages/auth/LoginForm';
 import { useToast } from "@/hooks/use-toast";
 import { ToastVariantsConstants } from '@/utils/constants';
 import { UserService } from '@/api/services';
+import type { SignInDto } from '@/types/dtos';
 
 const LoginPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  
 
   useEffect(() => {
     async function fetchMe() {
+      setIsLoading(true);
       try {
         await UserService.getMe();
         navigate(PagesRoutesConstants.EVENTS);
       } catch {
         // PASS
+      } finally {
+        setIsLoading(false);
       }
     }
     fetchMe();
   }, [navigate]);
 
-  const handleLoginSuccess = () => {
-    toast({
-      title: t(TranslationConstants.COMMON.MESSAGES.SUCCESS),
-      description: t(TranslationConstants.AUTH.LOGIN_SUCCESS),
-      variant: ToastVariantsConstants.SUCCESS,
-    });
-    navigate(PagesRoutesConstants.EVENTS);
+  const handleLoginSuccess = async (data: SignInDto) => {
+    setIsLoading(true);
+    try {
+      await UserService.signIn(data);
+      toast({
+        title: t(TranslationConstants.COMMON.MESSAGES.SUCCESS),
+        description: t(TranslationConstants.AUTH.LOGIN_SUCCESS),
+        variant: ToastVariantsConstants.SUCCESS,
+      });
+      navigate(PagesRoutesConstants.EVENTS);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -49,8 +61,14 @@ const LoginPage: React.FC = () => {
 
         <div className="mt-8 mx-4 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white dark:bg-duck-brown/5 py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-duck-yellow/20">
-            <LoginForm onSuccess={handleLoginSuccess} />
+            <LoginForm onLogin={handleLoginSuccess} isLoading={isLoading} />
           </div>
+          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+            {t(TranslationConstants.AUTH.DONT_HAVE_ACCOUNT)}{ ' ' }
+            <Link to={PagesRoutesConstants.SIGN_UP} className="font-medium text-duck-yellow hover:text-duck-yellow/80">
+              {t(TranslationConstants.AUTH.SIGN_UP_LINK)}
+            </Link>
+          </p>
         </div>
       </div>
     </Layout>
