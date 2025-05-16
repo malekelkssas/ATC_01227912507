@@ -7,15 +7,18 @@ import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import { LayoutList, LayoutGrid } from "lucide-react";
 import EventGrid from "@/components/pages/events/EventGrid";
 import EventListLayout from "@/components/pages/events/EventListLayout";
-import { TagService, EventService } from "@/api/services";
+import { TagService, EventService, UserService } from "@/api/services";
 import { type ErrorResponse } from '@/types';
 import type { GetTagsResponseDto, PaginationResponseDto , GetEventResponseDto, GetFullEventResponseDto, PaginationQueryDto } from "@/types/dtos";
-import { ToastVariantsConstants } from '@/utils/constants';
+import { PagesRoutesConstants, ToastVariantsConstants } from '@/utils/constants';
 import { TranslationConstants } from '@/utils/constants';
 import { useToast } from '@/hooks/useToast';
 import { useTranslation } from 'react-i18next';
 import { useLanguageChange } from '@/hooks/useLanguageChange';
 import { useAuthChange } from '@/hooks/useAuthChange';
+import { useSkipReset } from '@/context';
+import { useAppSelector } from '@/store';
+import { useNavigate } from 'react-router-dom';
 
 const DEFAULT_SELECTED_CATEGORY = "all";
 
@@ -33,8 +36,10 @@ const EventList: React.FC = () => {
   const [isGrid, setIsGrid] = useState(false);
   const { toast } = useToast();
   const { t } = useTranslation();
-
-
+  const { skipNextReset, setSkipNextReset, pendingBookingEventId, setPendingBookingEventId } = useSkipReset();
+  const { isLoginModalOpen, user } = useAppSelector(state => state.auth);
+  const navigate = useNavigate();
+  
   const resetPage = () => {
     setPagination({ page: -1, limit: 12 });
     setTags([]);
@@ -43,9 +48,47 @@ const EventList: React.FC = () => {
 
   useLanguageChange(resetPage);
 
-  useAuthChange(resetPage);
+  useAuthChange(() => {
+    if (skipNextReset && pendingBookingEventId) {
+      setSkipNextReset(false);
+      handleBooking(pendingBookingEventId);
+      return;
+    }
+    setPendingBookingEventId(null);
+    resetPage();
+  });
 
+  const handleBooking = async (eventId: string) => {
+    try {
+      await UserService.bookEvent(eventId);
+      toast({
+        title: t(TranslationConstants.EVENTS.BOOK_EVENT_SUCCESS),
+        description: t(TranslationConstants.EVENTS.BOOK_EVENT_SUCCESS),
+        variant: ToastVariantsConstants.SUCCESS,
+      });
+      setSkipNextReset(false);
+      setPendingBookingEventId(null);
+      navigate(`${PagesRoutesConstants.EVENTS}/${eventId}`);
+    } catch (error) {
+      const errorResponse : ErrorResponse = error as ErrorResponse;
+      toast({
+        title: t(TranslationConstants.COMMON.MESSAGES.ERROR),
+        description: errorResponse.response?.data?.message || t(TranslationConstants.EVENTS.GET_EVENTS_FAILED),
+        variant: ToastVariantsConstants.ERROR,
+      });
+      setSkipNextReset(false);
+      setPendingBookingEventId(null);
+    }
+  }
   
+
+  // if the modal closed without login
+  useEffect(() => {
+    if (!isLoginModalOpen && !user) {
+      setSkipNextReset(false);
+      setPendingBookingEventId(null);
+    }
+  }, [isLoginModalOpen, user]);
 
   // fetch tags
   useEffect(() => {
@@ -65,8 +108,9 @@ const EventList: React.FC = () => {
         setIsLoadingTags(false);
       }
     }
-    fetchTags();
-  }, []);
+    if (tags.length > 0) return;
+      fetchTags();
+  }, [tags]);
 
   // init and pagination for Events
   useEffect(() => {
@@ -146,22 +190,22 @@ const EventList: React.FC = () => {
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <Input
-                placeholder="Search for events"
+                placeholder={t(TranslationConstants.EVENTS.SEARCH_EVENTS)}
                 value={searchTerm}
                 onChange={handleSearch}
-                className="border-duck-yellow/20 focus-visible:ring-duck-yellow"
+                className="border-duck-nature/20 focus-visible:ring-duck-nature"
               />
             </div>
-            <div className="w-full md:w-64">
+            <div className="w-full md:w-64 rtl:ml-auto ltr:mr-auto">
               <Select value={selectedCategory} onValueChange={handleCategoryChange}>
-                <SelectTrigger className="border-duck-yellow/20">
+                <SelectTrigger className="!border-duck-nature/20 focus:ring-duck-nature">
                   {isLoadingTags ? (
                     <LoadingSpinner className="w-6 h-6" />
                   ) : (
                     <SelectValue placeholder="Filter by Tag" />
                   )}
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="border-duck-nature/20">
                   {isLoadingTags ? (
                     <div className="flex justify-center items-center py-4">
                       <LoadingSpinner className="w-6 h-6" />
@@ -169,11 +213,11 @@ const EventList: React.FC = () => {
                   ) : (
                     <>
                       <SelectItem value={DEFAULT_SELECTED_CATEGORY}>
-                        All Tags
+                        {t(TranslationConstants.EVENTS.ALL_TAGS)}
                       </SelectItem>
                       {tags.map(tag => (
                         <SelectItem key={tag._id} value={tag._id}>
-                          <span className="flex items-center gap-2">
+                          <span className="flex items-center gap-2 rtl:flex-row-reverse">
                             <span
                               className="inline-block w-3 h-3 rounded-full"
                               style={{ backgroundColor: tag.color }}

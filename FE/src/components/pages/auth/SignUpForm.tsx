@@ -44,7 +44,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp, isLoading }) => {
             type="text"
             autoComplete={SignUpFields.NAME}
             {...register(SignUpFields.NAME)}
-            className={`border-duck-yellow/20 focus:border-duck-yellow focus:ring-duck-yellow ${
+            className={`border-duck-nature/20 focus:border-duck-nature focus:ring-duck-nature ${
               errors[SignUpFields.NAME] ? 'border-red-500' : ''
             }`}
           />
@@ -64,7 +64,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp, isLoading }) => {
             type="email"
             autoComplete={SignUpFields.EMAIL}
             {...register(SignUpFields.EMAIL)}
-            className={`border-duck-yellow/20 focus:border-duck-yellow focus:ring-duck-yellow ${
+            className={`border-duck-nature/20 focus:border-duck-nature focus:ring-duck-nature ${
               errors[SignUpFields.EMAIL] ? 'border-red-500' : ''
             }`}
           />
@@ -84,7 +84,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp, isLoading }) => {
             type="password"
             autoComplete="new-password"
             {...register(SignUpFields.PASSWORD)}
-            className={`border-duck-yellow/20 focus:border-duck-yellow focus:ring-duck-yellow ${
+            className={`border-duck-nature/20 focus:border-duck-nature focus:ring-duck-nature ${
               errors[SignUpFields.PASSWORD] ? 'border-red-500' : ''
             }`}
           />

@@ -64,12 +64,12 @@ const LoginPage: React.FC = () => {
         </div>
 
         <div className="mt-8 mx-4 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white dark:bg-duck-brown/5 py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-duck-yellow/20">
+          <div className="bg-white dark:bg-duck-brown/5 py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-duck-nature/20">
             <LoginForm onLogin={handleLoginSuccess} isLoading={isLoading} />
           </div>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
             {t(TranslationConstants.AUTH.DONT_HAVE_ACCOUNT)}{ ' ' }
-            <Link to={PagesRoutesConstants.SIGN_UP} className="font-medium text-duck-yellow hover:text-duck-yellow/80">
+            <Link to={PagesRoutesConstants.SIGN_UP} className="font-medium text-duck-nature hover:text-duck-nature/80">
               {t(TranslationConstants.AUTH.SIGN_UP_LINK)}
             </Link>
           </p>

@@ -40,7 +40,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
             type="email"
             autoComplete={LoginFields.EMAIL}
             {...register(LoginFields.EMAIL)}
-            className={`border-duck-yellow/20 focus:border-duck-yellow focus:ring-duck-yellow ${
+            className={`border-duck-nature/20 focus:border-duck-nature focus:ring-duck-nature ${
               errors[LoginFields.EMAIL] ? 'border-red-500' : ''
             }`}
           />
@@ -60,7 +60,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
             type="password"
             autoComplete="current-password"
             {...register(LoginFields.PASSWORD)}
-            className={`border-duck-yellow/20 focus:border-duck-yellow focus:ring-duck-yellow ${
+            className={`border-duck-nature/20 focus:border-duck-nature focus:ring-duck-nature ${
               errors[LoginFields.PASSWORD] ? 'border-red-500' : ''
             }`}
           />

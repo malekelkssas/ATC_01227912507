@@ -41,7 +41,10 @@
         "unbook": "إلغاء الحجز",
         "all_events": "الفعاليات",
         "book_event_success": "تم حجز التذاكر بنجاح",
-        "unbook_event_success": "تم إلغاء الحجز بنجاح"
+        "unbook_event_success": "تم إلغاء الحجز بنجاح",
+        "booking": "جاري الحجز...",
+        "all_tags": "جميع التصنيفات",
+        "search_events": "ابحث عن فعالية"
     },
     "common": {
         "loading": "جاري التحميل...",

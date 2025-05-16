@@ -56,7 +56,10 @@
     "description": "Description",
     "location": "Location",
     "book_event_success": "Event booked successfully",
-    "unbook_event_success": "Event unbooked successfully"
+    "unbook_event_success": "Event unbooked successfully",
+    "booking": "Booking...",
+    "all_tags": "All Tags",
+    "search_events": "Search for event"
   },
   "validation": {
     "required": {

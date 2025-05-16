@@ -8,6 +8,7 @@ import { UserService } from '@/api/services';
 import type { SignInDto, SignInResponseDto } from '@/types/dtos';
 import { useTranslation } from 'react-i18next';
 import useClickOutside from '@/hooks/useClickOutside';
+import { createPortal } from 'react-dom';
 
 const GlobalLoginModal: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -16,6 +17,12 @@ const GlobalLoginModal: React.FC = () => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = React.useState(false);
   const modalRef = React.useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
 
   useClickOutside(modalRef, () => {
     if (isOpen) dispatch(closeLoginModal());
@@ -38,13 +45,25 @@ const GlobalLoginModal: React.FC = () => {
     }
   };
 
-  if (!isOpen) return null;
+  if (!mounted || !isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div ref={modalRef} className="bg-white dark:bg-duck-brown/90 rounded-xl shadow-lg p-8 w-full max-w-md relative">
+  return createPortal(
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-200"
+      style={{ 
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        backdropFilter: 'blur(4px)',
+      }}
+    >
+      <div 
+        ref={modalRef} 
+        className="bg-white dark:bg-duck-brown/90 rounded-xl shadow-lg p-8 w-full max-w-md relative transform transition-all duration-200 scale-100"
+        style={{
+          animation: 'modalFadeIn 0.2s ease-out'
+        }}
+      >
         <button
-          className="absolute top-2 right-2 text-gray-500 hover:text-duck-yellow text-xl"
+          className="absolute top-2 right-2 text-gray-500 hover:text-duck-yellow text-xl transition-colors duration-200"
           onClick={() => dispatch(closeLoginModal())}
           aria-label="Close"
         >
@@ -55,7 +74,8 @@ const GlobalLoginModal: React.FC = () => {
         </h2>
         <LoginForm onLogin={handleLogin} isLoading={isLoading} />
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

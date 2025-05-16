@@ -45,6 +45,9 @@ export class TranslationConstants {
     ALL_EVENTS: 'events.all_events',
     BOOK_EVENT_SUCCESS: 'events.book_event_success',
     UNBOOK_EVENT_SUCCESS: 'events.unbook_event_success',
+    BOOKING: 'events.booking',
+    ALL_TAGS: 'events.all_tags',
+    SEARCH_EVENTS: 'events.search_events',
   } as const;
 
   static readonly COMMON = {
