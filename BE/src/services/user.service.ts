@@ -1,7 +1,7 @@
 import { config } from "@/config";
 import { eventRepository, userRepository } from "@/repository";
 import { CreateUserDto, CreateUserResponseDto, GetEventResponseDto, GetFullEventResponseDto, GetFullEventsResponseDto, GetUserResponseDto, IJwtUser, LanguageEnum, PaginationQueryDto, PaginationResponseDto, RefreshTokenResponseDto, SignInDto, SignInResponseDto } from "@/types";
-import { generateRefreshToken, generateToken, NotFoundError, UnauthorizedError } from "@/utils";
+import { ERROR_MESSAGES, generateRefreshToken, generateToken, NotFoundError, UnauthorizedError } from "@/utils";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { EventService } from "./event.service";
@@ -67,11 +67,14 @@ export class UserService {
         try {
             const decoded = jwt.verify(refreshToken, config.jwtRefreshSecret) as Partial<IJwtUser>;
             userId = decoded.id;
-        } catch {
-            throw new UnauthorizedError("Invalid token");
+        } catch (error) {
+            if (error instanceof jwt.TokenExpiredError) {
+                throw new UnauthorizedError(ERROR_MESSAGES.TOKEN_EXPIRED);
+            }
+            throw new UnauthorizedError(ERROR_MESSAGES.INVALID_TOKEN);
         }
         if (!userId) {
-            throw new UnauthorizedError("Invalid token");
+            throw new UnauthorizedError(ERROR_MESSAGES.INVALID_TOKEN);
         }
         const user = await userRepository.findById(userId);
         if (!user) {

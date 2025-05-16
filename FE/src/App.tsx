@@ -8,9 +8,15 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Route, Routes } from 'react-router-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
-import { PagesRoutesConstants } from '@/utils/constants';
+import { NodeEnvConstants, PagesRoutesConstants } from '@/utils/constants';
 import GlobalLoginModal from '@/components/shared/GlobalLoginModal';
-import LoadingSpinner from './components/shared/LoadingSpinner';
+import ProgressLoader from './components/shared/ProgressLoader';
+import { SkipResetProvider } from '@/context';
+import { scan } from "react-scan";
+
+scan({
+  enabled: import.meta.env.VITE_NODE_ENV === NodeEnvConstants.DEVELOPMENT,
+});
 
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -29,12 +35,16 @@ function App() {
           <Sonner />
           <GlobalLoginModal />
           <BrowserRouter>
-            <Suspense fallback={<LoadingSpinner />}>
+            <Suspense fallback={<ProgressLoader />}>
               <Routes>
                 <Route path={PagesRoutesConstants.SIGN_IN} element={<LoginPage />} />
                 <Route path={PagesRoutesConstants.SIGN_UP} element={<SignUp />} />
                 <Route path={PagesRoutesConstants.NOT_FOUND} element={<NotFound />} />
-                <Route path={PagesRoutesConstants.EVENTS} element={<EventList />} />
+                <Route path={PagesRoutesConstants.EVENTS} element={
+                  <SkipResetProvider>
+                    <EventList />
+                  </SkipResetProvider>
+                } />
                 <Route path={PagesRoutesConstants.EVENT_DETAILS} element={<EventDetails />} />
                 <Route path={PagesRoutesConstants.HOME} element={<Index />} />
                 <Route path={PagesRoutesConstants.SUCCESS} element={<Success />} />

@@ -8,7 +8,7 @@ export const config = {
   mongoUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/quackseat',
   nodeEnv: process.env.NODE_ENV || NODE_ENV.DEVELOPMENT,
   jwtSecret: process.env.JWT_SECRET || 'The Quack is the best',
-  jwtExpiration: process.env.JWT_EXPIRATION || '1h',
-  jwtRefreshExpiration: process.env.JWT_REFRESH_EXPIRATION || '1d',
+  jwtExpiration: process.env.JWT_EXPIRATION || '1d',
+  jwtRefreshExpiration: process.env.JWT_REFRESH_EXPIRATION || '7d',
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET || 'The Quack is the best',
 };

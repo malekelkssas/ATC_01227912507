@@ -177,3 +177,9 @@
     transform: scaleX(1);
   }
 }
+
+[dir="rtl"] .SelectContent {
+  right: 0 !important;
+  left: auto !important;
+  text-align: right;
+}

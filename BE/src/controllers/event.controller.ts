@@ -32,14 +32,7 @@ export class EventController {
     @TryCatchController
     async getEvents(req: Request, res: Response) {
         const language = extractLanguage(req);
-        let userId: string | undefined;
-        try {
-            const token = extractToken(req);
-            const decoded = decodeToken(token);
-            userId = decoded.id;
-        } catch {
-            // PASS: unauthenticated user
-        }
+        const userId = req.user?.id;
         const pagination: PaginationQueryDto = PaginationQueryZod.parse(req.query);
         const response = await eventService.getEvents(language, pagination, userId);
         res.status(HTTP_STATUS_CODE.OK).json(response);
@@ -49,14 +42,7 @@ export class EventController {
     async getEvent(req: Request, res: Response) {
         const id: IdParamDto = IdParamZod.parse(req.params.id);
         const language = extractLanguage(req);
-        let userId: string | undefined;
-        try {
-            const token = extractToken(req);
-            const decoded = decodeToken(token);
-            userId = decoded.id;
-        } catch {
-            // PASS: unauthenticated user
-        }
+        const userId = req.user?.id;
         const response = await eventService.getEvent(id, language, userId);
         res.status(HTTP_STATUS_CODE.OK).json(response);
     }
