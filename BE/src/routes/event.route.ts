@@ -8,6 +8,7 @@ const eventRouter = Router();
 
 eventRouter.post("", authenticate, authorization(UserRoleEnum.ADMIN), uploadEventImage, eventController.createEvent);
 eventRouter.get("", optionalAuthenticate, eventController.getEvents);
+eventRouter.get(`/${ROUTES.FULL_EVENTS}`, authenticate, authorization(UserRoleEnum.ADMIN), eventController.getFullEvents);
 eventRouter.get(`/${ROUTES.ID}`, optionalAuthenticate, eventController.getEvent);
 eventRouter.patch(`/${ROUTES.ID}`, authenticate, authorization(UserRoleEnum.ADMIN), uploadEventImage, eventController.updateEvent);
 eventRouter.delete(`/${ROUTES.ID}`, authenticate, authorization(UserRoleEnum.ADMIN), eventController.deleteEvent);

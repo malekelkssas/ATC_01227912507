@@ -62,5 +62,12 @@ export class EventController {
         await eventService.deleteEvent(id);
         res.status(HTTP_STATUS_CODE.NO_CONTENT).send().end();
     }
+
+    @TryCatchController
+    async getFullEvents(req: Request, res: Response) {
+        const pagination: PaginationQueryDto = PaginationQueryZod.parse(req.query);
+        const response = await eventService.getFullEvents(pagination);
+        res.status(HTTP_STATUS_CODE.OK).json(response);
+    }
     
 }

@@ -1,5 +1,5 @@
 import { eventRepository, userRepository } from "@/repository";
-import { CreateEventDto, CreateEventResponseDto, GetEventResponseDto, IEvent, ITag, LanguageEnum, PaginationQueryDto, UpdateEventDto, PaginationResponseDto, GetFullEventResponseDto } from "@/types";
+import { CreateEventDto, CreateEventResponseDto, GetEventResponseDto, IEvent, ITag, LanguageEnum, PaginationQueryDto, UpdateEventDto, PaginationResponseDto, GetFullEventResponseDto, GetEventsAdminResponseDto, GetEventAdminResponseDto } from "@/types";
 import { TagService } from "./tag.service";
 import { NotFoundError, transformToDotNotation } from "@/utils";
 
@@ -34,6 +34,22 @@ export class EventService {
         }
         return {
             data,
+            pagination: {
+                page: pagination.page,
+                limit: pagination.limit,
+                total,
+                hasMore,
+                totalPages
+            }
+        };
+    }
+
+    async getFullEvents(pagination: PaginationQueryDto): Promise<PaginationResponseDto<GetEventAdminResponseDto>> {
+        const { data: events, total } = await eventRepository.findWithPagination({}, pagination);
+        const totalPages = Math.ceil(total / pagination.limit);
+        const hasMore = pagination.page < totalPages - 1;
+        return {
+            data: events as unknown as GetEventsAdminResponseDto,
             pagination: {
                 page: pagination.page,
                 limit: pagination.limit,
