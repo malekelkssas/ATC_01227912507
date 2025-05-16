@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { GetTagResponseZod } from './tag.dto';
+import { GetFullTagsResponseZod, GetTagResponseZod } from './tag.dto';
+import { LanguageZod } from './language.dto';
 
 // Get Events for public
 export const GetEventResponseZod = z.object({
@@ -34,3 +35,22 @@ export type GetFullEventResponseDto = z.infer<typeof GetFullEventResponseZod>;
 export const GetFullEventsResponseZod = z.array(GetFullEventResponseZod);
 
 export type GetFullEventsResponseDto = z.infer<typeof GetFullEventsResponseZod>;
+
+
+// Get Events for admin
+export const GetEventAdminResponseZod = z.object({
+    _id: z.string(),
+    name: LanguageZod,
+    description: LanguageZod,
+    category: z.array(GetFullTagsResponseZod),
+    venue: LanguageZod,
+    imageUrl: z.string(),
+    price: z.number(),
+    date: z.date()
+});
+
+export type GetEventAdminResponseDto = z.infer<typeof GetEventAdminResponseZod>;
+
+export const GetEventsAdminResponseZod = z.array(GetEventAdminResponseZod);
+
+export type GetEventsAdminResponseDto = z.infer<typeof GetEventsAdminResponseZod>;

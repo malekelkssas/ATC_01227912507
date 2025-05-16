@@ -20,6 +20,7 @@ scan({
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const EventList = lazy(() => import('./pages/EventList'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const SignUp = lazy(() => import('./pages/SignUp'));
 const Index = lazy(() => import('./pages/index'));
 const EventDetails = lazy(() => import('./pages/EventDetails'));
@@ -46,6 +47,7 @@ function App() {
                 <Route path={PagesRoutesConstants.EVENT_DETAILS} element={<EventDetails />} />
                 <Route path={PagesRoutesConstants.HOME} element={<Index />} />
                 <Route path={PagesRoutesConstants.SUCCESS} element={<Success />} />
+                <Route path={PagesRoutesConstants.ADMIN_DASHBOARD} element={<AdminDashboard />} />
               </Routes>
             </Suspense>
           </BrowserRouter>

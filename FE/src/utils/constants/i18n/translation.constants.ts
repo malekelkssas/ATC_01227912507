@@ -34,6 +34,7 @@ export class TranslationConstants {
     BOOK_EVENT_FAILED: 'events.book_event_failed',
     BOOKED: 'events.booked',
     DETAILS: 'events.details',
+    TITLE: 'events.title',
     DESCRIPTION: 'events.description',
     LOCATION: 'events.location',
     PRICE: 'events.price',
@@ -48,14 +49,23 @@ export class TranslationConstants {
     BOOKING: 'events.booking',
     ALL_TAGS: 'events.all_tags',
     SEARCH_EVENTS: 'events.search_events',
+    NO_EVENTS: 'events.no_events',
+    TOTAL_EVENTS: 'events.total_events',
   } as const;
 
   static readonly COMMON = {
     LOADING: 'common.loading',
     BUTTONS: {
+      PREVIOUS: 'common.buttons.previous',
+      NEXT: 'common.buttons.next',
       SUBMIT: 'common.buttons.submit',
       CANCEL: 'common.buttons.cancel',
       THEME_TOGGLE: 'common.buttons.theme_toggle',
+      EDIT: 'common.buttons.edit',
+      DELETE: 'common.buttons.delete',
+      ACTIONS: 'common.buttons.actions',
+      PAGE: 'common.buttons.page',
+      OF: 'common.buttons.of',
     },
     MESSAGES: {
       SUCCESS: 'common.messages.success',
@@ -87,4 +97,12 @@ export class TranslationConstants {
       MAX: 'validation.name.max',
     },
   } as const;
+  static readonly ADMIN = {
+    DASHBOARD: {
+      TITLE: 'admin.dashboard.title',
+    },
+    EVENTS: {
+      MANAGE_EVENTS: 'admin.events.manage_events',
+    }
+  } as const; 
 } 

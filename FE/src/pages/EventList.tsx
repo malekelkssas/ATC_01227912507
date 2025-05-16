@@ -274,7 +274,7 @@ const EventList: React.FC = () => {
           // No events and not loading
           <div className="text-center py-20">
             <p className="text-xl text-gray-500 dark:text-gray-400">
-              No Events
+              {t(TranslationConstants.EVENTS.NO_EVENTS)}
             </p>
           </div>
         )}

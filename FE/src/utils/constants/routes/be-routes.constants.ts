@@ -10,6 +10,8 @@ export class BeRoutesConstants {
 
     // Event routes
     static readonly EVENTS = "events";
+    static readonly FULL_EVENTS = "full";
+
 
     // Tag routes
     static readonly TAGS = "tags";

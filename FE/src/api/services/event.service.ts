@@ -5,7 +5,8 @@ import type {
     GetFullEventResponseDto, 
     PaginationQueryDto,
     PaginationResponseDto,
-    IdParamDto
+    IdParamDto,
+    GetEventAdminResponseDto
 } from "@/types/dtos";
 import type { ErrorResponse } from "@/types";
 
@@ -20,5 +21,8 @@ export class EventService {
         const response = await api.get(`/${baseUrl}/${id}`);
         return response.data;
     }
-    
+    static async getFullEvents(query: PaginationQueryDto): Promise<PaginationResponseDto<GetEventAdminResponseDto> | ErrorResponse> {
+        const response = await api.get(`/${baseUrl}/${BeRoutesConstants.FULL_EVENTS}`, { params: query });
+        return response.data;
+    }
 }

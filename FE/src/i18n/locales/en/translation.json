@@ -30,7 +30,14 @@
     "buttons": {
       "submit": "Submit",
       "cancel": "Cancel",
-      "theme_toggle": "Toggle theme"
+      "theme_toggle": "Toggle theme",
+      "edit": "Edit",
+      "delete": "Delete",
+      "actions": "Actions",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "of": "of"
     },
     "messages": {
       "success": "Success!",
@@ -46,6 +53,7 @@
     "get_event_failed": "Failed to get event",
     "book_event_failed": "Failed to book event",
     "unbook_event_failed": "Failed to unbook event",
+    "title": "Title",
     "price": "Price",
     "date": "Date",
     "time": "Time",
@@ -59,7 +67,17 @@
     "unbook_event_success": "Event unbooked successfully",
     "booking": "Booking...",
     "all_tags": "All Tags",
-    "search_events": "Search for event"
+    "search_events": "Search for event",
+    "no_events": "No events found",
+    "total_events": "Total events in the system"
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Admin Dashboard"
+    },
+    "events": {
+      "manage_events": "Manage Events"
+    }
   },
   "validation": {
     "required": {

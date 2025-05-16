@@ -33,6 +33,7 @@
         "get_event_failed": "فشل جلب الفعالية",
         "book_event_failed": "فشل حجز التذاكر",
         "unbook_event_failed": "فشل إلغاء الحجز",
+        "title": "العنوان",
         "price": "السعر",
         "date": "التاريخ",
         "time": "الوقت",
@@ -44,14 +45,31 @@
         "unbook_event_success": "تم إلغاء الحجز بنجاح",
         "booking": "جاري الحجز...",
         "all_tags": "جميع التصنيفات",
-        "search_events": "ابحث عن فعالية"
+        "search_events": "ابحث عن فعالية",
+        "no_events": "لا يوجد فعاليات",
+        "total_events": "إجمالي الفعاليات في النظام"
+    },
+    "admin": {
+        "dashboard": {
+            "title": "لوحة التحكم الإدارية"
+        },
+        "events": {
+            "manage_events": "إدارة الفعاليات"
+        }
     },
     "common": {
         "loading": "جاري التحميل...",
         "buttons": {
             "submit": "إرسال",
             "cancel": "إلغاء",
-            "theme_toggle": "تبديل المظهر"
+            "theme_toggle": "تبديل المظهر",
+            "edit": "تعديل",
+            "delete": "حذف",
+            "actions": "العمليات",
+            "previous": "السابق",
+            "next": "التالي",
+            "page": "الصفحة",
+            "of": "من"
         },
         "messages": {
             "success": "تم بنجاح!",
