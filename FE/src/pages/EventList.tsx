@@ -19,6 +19,7 @@ import { useAuthChange } from '@/hooks/useAuthChange';
 import { useSkipReset } from '@/context';
 import { useAppSelector } from '@/store';
 import { useNavigate } from 'react-router-dom';
+import { useDebounce } from '@/hooks/useDebounce';
 
 const DEFAULT_SELECTED_CATEGORY = "all";
 
@@ -32,6 +33,7 @@ const EventList: React.FC = () => {
   const [ tags, setTags ] = useState<GetTagsResponseDto>([]);
   const [events, setEvents] = useState<PaginationResponseDto<GetEventResponseDto | GetFullEventResponseDto>>();
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const [selectedCategory, setSelectedCategory] = useState(DEFAULT_SELECTED_CATEGORY);
   const [isGrid, setIsGrid] = useState(false);
   const { toast } = useToast();
@@ -42,11 +44,13 @@ const EventList: React.FC = () => {
   
   const resetPage = () => {
     setPagination({ page: -1, limit: 12 });
-    setTags([]);
     setEvents(undefined);
   }
 
-  useLanguageChange(resetPage);
+  useLanguageChange(() => {
+    resetPage();
+    setTags([]);
+  });
 
   useAuthChange(() => {
     if (skipNextReset && pendingBookingEventId) {
@@ -120,9 +124,20 @@ const EventList: React.FC = () => {
       try {
         const page = pagination.page === -1 ? 0 : pagination.page;
         const limit = pagination.limit;
-        const newEvents = await EventService.getEvents({ page, limit }) as PaginationResponseDto<GetEventResponseDto | GetFullEventResponseDto>;
+        const selectedTag = tags.find(tag => tag._id === selectedCategory);
+        const filter = selectedCategory !== DEFAULT_SELECTED_CATEGORY && selectedTag
+          ? { category: selectedTag.name }
+          : undefined;
+        
+        const newEvents = await EventService.getEvents({ 
+          page, 
+          limit,
+          search: debouncedSearchTerm || undefined,
+          filter: filter ? JSON.stringify(filter) : undefined
+        }) as PaginationResponseDto<GetEventResponseDto | GetFullEventResponseDto>;
+        
         setEvents((prev) => {
-          if (!prev) return newEvents;
+          if (!prev || pagination.page === -1) return newEvents;
           return {
             ...newEvents,
             data: [...prev.data, ...newEvents.data],
@@ -144,7 +159,12 @@ const EventList: React.FC = () => {
       }
     }
     fetchEvents();
-  }, [pagination.page]);
+  }, [pagination.page, debouncedSearchTerm, selectedCategory, tags]);
+
+  // Reset pagination when search or category changes
+  useEffect(() => {
+    resetPage();
+  }, [debouncedSearchTerm, selectedCategory]);
 
   // Detect scroll to bottom to load more events
   useEffect(() => {
@@ -176,13 +196,12 @@ const EventList: React.FC = () => {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* TODO: Add a slogan */}
         <div className="bg-gradient-to-r from-duck-nature/20 to-duck-water/30 dark:from-duck-brown/30 dark:to-duck-yellow/10 rounded-xl p-8 mb-8">
           <h1 className="text-3xl font-bold text-duck-brown dark:text-duck-yellow">
-            All Events
+            {t(TranslationConstants.EVENTS.ALL_EVENTS)}
           </h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
-            slogan
+            {t(TranslationConstants.EVENTS.ALL_EVENTS_DESCRIPTION)}
           </p>
         </div>
 

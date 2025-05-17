@@ -13,7 +13,7 @@ import { PagesRoutesConstants, TranslationConstants } from "@/utils/constants";
 import { useQuery } from "@tanstack/react-query";
 import { EventService } from "@/api/services";
 import { Loader2, Plus, Search, Eye, Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/useToast";
 import { ToastVariantsConstants } from "@/utils/constants";
 import type { ErrorResponse } from "@/types";
@@ -23,6 +23,7 @@ import CreateEventDialog from "./CreateEventDialog";
 import UpdateEventDialog from "./UpdateEventDialog";
 import { useNavigate } from "react-router-dom";
 import { LanguagesConstants } from '@/utils/constants';
+import { useDebounce } from "@/hooks/useDebounce";
 
 const EventsTable = () => {
     const { t, i18n } = useTranslation();
@@ -30,6 +31,7 @@ const EventsTable = () => {
     const { toast } = useToast();
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
+    const debouncedSearchQuery = useDebounce(searchQuery, 500);
     const [currentPage, setCurrentPage] = useState(1);
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
     const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
@@ -37,12 +39,21 @@ const EventsTable = () => {
     const [selectedEvent, setSelectedEvent] = useState<GetEventAdminResponseDto | null>(null);
 
     const { data: events, isLoading, refetch, error } = useQuery({
-        queryKey: ["events", currentPage, searchQuery],
+        queryKey: ["events", currentPage, debouncedSearchQuery],
         queryFn: async () => {
-                const response = await EventService.getFullEvents({ page: currentPage - 1, limit: 10 }) as PaginationResponseDto<GetEventAdminResponseDto>;
+                const response = await EventService.getFullEvents({ 
+                    page: currentPage - 1, 
+                    limit: 3,
+                    search: debouncedSearchQuery || undefined
+                }) as PaginationResponseDto<GetEventAdminResponseDto>;
                 return response;
         },
     });
+
+    // Reset to first page when search changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [debouncedSearchQuery]);
 
     const handleDelete = async () => {
         if (!selectedEvent) return;
@@ -142,7 +153,11 @@ const EventsTable = () => {
                             events.data.map((event: GetEventAdminResponseDto) => (
                                 <TableRow key={event._id} className="hover:bg-muted/50">
                                     <TableCell className="text-right rtl:text-right ltr:text-left">{event.name[lang as keyof typeof event.name]}</TableCell>
-                                    <TableCell className="text-right rtl:text-right ltr:text-left">{event.description[lang as keyof typeof event.description]}</TableCell>
+                                    <TableCell className="text-right rtl:text-right ltr:text-left max-w-[300px]">
+                                        <div className="truncate" title={event.description[lang as keyof typeof event.description]}>
+                                            {event.description[lang as keyof typeof event.description]}
+                                        </div>
+                                    </TableCell>
                                     <TableCell className="text-right rtl:text-right ltr:text-left">{event.venue[lang as keyof typeof event.venue]}</TableCell>
                                     <TableCell className="text-right rtl:text-right ltr:text-left">{event.price}</TableCell>
                                     <TableCell className="text-right rtl:text-right ltr:text-left">{new Date(event.date).toLocaleDateString()}</TableCell>
