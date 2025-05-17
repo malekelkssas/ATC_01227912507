@@ -19,10 +19,10 @@ enum AdminDashboardTabs {
   CATEGORIES = 'categories',
 }
 
+
 const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [eventsCount, setEventsCount] = useState(0);
   const [categoriesCount, setCategoriesCount] = useState(0);
   const [activeTab, setActiveTab] = useState<AdminDashboardTabs>(AdminDashboardTabs.EVENTS);
   
@@ -86,7 +86,7 @@ const AdminDashboard: React.FC = () => {
             {/* Events Table */}
             {activeTab === AdminDashboardTabs.EVENTS && (
               <Suspense fallback={<LoadingSpinner />}>
-                <EventsTable setEventsCount={setEventsCount} eventsCount={eventsCount} />
+                <EventsTable />
               </Suspense>
             )}
             {activeTab === AdminDashboardTabs.CATEGORIES && (

@@ -6,7 +6,9 @@ import type {
     PaginationQueryDto,
     PaginationResponseDto,
     IdParamDto,
-    GetEventAdminResponseDto
+    GetEventAdminResponseDto,
+    CreateEventResponseDto,
+    UpdateEventDto
 } from "@/types/dtos";
 import type { ErrorResponse } from "@/types";
 
@@ -27,6 +29,14 @@ export class EventService {
     }
     static async deleteEvent(id: IdParamDto): Promise<void | ErrorResponse> {
         const response = await api.delete(`/${baseUrl}/${id}`);
+        return response.data;
+    }
+    static async patchEvent(id: IdParamDto, data: FormData): Promise<UpdateEventDto | ErrorResponse> {
+        const response = await api.patch(`/${baseUrl}/${id}`, data);
+        return response.data;
+    }
+    static async createEvent(data: FormData): Promise<CreateEventResponseDto | ErrorResponse> {
+        const response = await api.post(`/${baseUrl}`, data);
         return response.data;
     }
 }

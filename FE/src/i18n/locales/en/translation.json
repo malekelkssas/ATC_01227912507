@@ -37,7 +37,8 @@
       "previous": "Previous",
       "next": "Next",
       "page": "Page",
-      "of": "of"
+      "of": "of",
+      "choose_file": "Choose file"
     },
     "messages": {
       "success": "Success!",
@@ -55,6 +56,7 @@
     "get_event_failed": "Failed to get event",
     "book_event_failed": "Failed to book event",
     "unbook_event_failed": "Failed to unbook event",
+    "name": "Name",
     "title": "Title",
     "price": "Price",
     "date": "Date",
@@ -71,7 +73,14 @@
     "all_tags": "All Tags",
     "search_events": "Search for event",
     "no_events": "No events found",
-    "total_events": "Total events in the system"
+    "total_events": "Total events in the system",
+    "image": "Image",
+    "update_event": "Update Event",
+    "category": "Category",
+    "select_categories": "Select categories",
+    "selected": "selected",
+    "search_categories": "Search categories",
+    "no_categories": "No categories found"
   },
   "categories": {
     "name": "Name",
@@ -89,7 +98,8 @@
     },
     "events": {
       "manage_events": "Manage Events",
-      "create_event": "Create Event"
+      "create_event": "Create Event",
+      "update_event" :"Update Event"
     }
   },
   "validation": {
@@ -112,6 +122,83 @@
     "name": {
       "min": "Name must be at least 3 characters long",
       "max": "Name must be less than 50 characters"
+    },
+    "event": {
+      "name": {
+        "en": {
+          "required": "English name is required",
+          "invalid_type": "English name must be a string",
+          "min_length": "English name must be at least 3 characters long",
+          "max_length": "English name must be less than 30 characters"
+        },
+        "ar": {
+          "required": "Arabic name is required",
+          "invalid_type": "Arabic name must be a string",
+          "min_length": "Arabic name must be at least 3 characters long",
+          "max_length": "Arabic name must be less than 30 characters"
+        },
+        "invalid_type": "Name must be an object",
+        "empty": "At least one language field must be provided for name",
+        "required_object": "Name is required"
+      },
+      "description": {
+        "en": {
+          "required": "English description is required",
+          "invalid_type": "English description must be a string",
+          "min_length": "English description must be at least 10 characters long",
+          "max_length": "English description must be less than 1000 characters"
+        },
+        "ar": {
+          "required": "Arabic description is required",
+          "invalid_type": "Arabic description must be a string",
+          "min_length": "Arabic description must be at least 10 characters long",
+          "max_length": "Arabic description must be less than 1000 characters"
+        },
+        "invalid_type": "Description must be an object",
+        "empty": "At least one language field must be provided for description",
+        "required_object": "Description is required"
+      },
+      "venue": {
+        "en": {
+          "required": "English venue is required",
+          "invalid_type": "English venue must be a string",
+          "min_length": "English venue must be at least 3 characters long",
+          "max_length": "English venue must be less than 30 characters"
+        },
+        "ar": {
+          "required": "Arabic venue is required",
+          "invalid_type": "Arabic venue must be a string",
+          "min_length": "Arabic venue must be at least 3 characters long",
+          "max_length": "Arabic venue must be less than 30 characters"
+        },
+        "invalid_type": "Venue must be an object",
+        "empty": "At least one language field must be provided for venue",
+        "required_object": "Venue is required"
+      },
+      "category": {
+        "required": "Category is required",
+        "invalid_type": "Category must be an array",
+        "invalid_id": "Invalid category ID format",
+        "min_items": "Category must be at least 1 item",
+        "max_items": "Category must be less than 4 items"
+      },
+      "image_url": {
+        "required": "Image URL is required",
+        "invalid_type": "Image URL must be a string",
+        "invalid": "Invalid image URL format"
+      },
+      "price": {
+        "required": "Price is required",
+        "invalid_type": "Price must be a number",
+        "min": "Price must be greater than 0"
+      },
+      "date": {
+        "required": "Date is required",
+        "invalid_type": "Date must be a valid date"
+      },
+      "update": {
+        "empty": "At least one field must be provided for update"
+      }
     }
   }
 }

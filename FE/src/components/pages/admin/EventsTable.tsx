@@ -1,103 +1,60 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useEffect, useState } from "react";
-import { EventService } from "@/api/services";
-import type { ErrorResponse, GetEventAdminResponseDto, PaginationQueryDto, PaginationResponseDto } from "@/types";
 import { useTranslation } from "react-i18next";
-import { LanguagesConstants } from '@/utils/constants';
-import { useToast } from "@/hooks/useToast";
-import { ToastVariantsConstants, TranslationConstants } from "@/utils/constants";
-import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import { Button } from "@/components/ui/button";
-import { formatDate } from "@/utils/date";
+import { Input } from "@/components/ui/input";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import { PagesRoutesConstants, TranslationConstants } from "@/utils/constants";
+import { useQuery } from "@tanstack/react-query";
+import { EventService } from "@/api/services";
+import { Loader2, Plus, Search, Eye, Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { useToast } from "@/hooks/useToast";
+import { ToastVariantsConstants } from "@/utils/constants";
+import type { ErrorResponse } from "@/types";
+import type { GetEventAdminResponseDto, PaginationResponseDto } from "@/types/dtos";
 import DeleteConfirmationDialog from "@/components/shared/DeleteConfirmationDialog";
+import CreateEventDialog from "./CreateEventDialog";
+import UpdateEventDialog from "./UpdateEventDialog";
+import { useNavigate } from "react-router-dom";
+import { LanguagesConstants } from '@/utils/constants';
 
-interface EventsTableProps {
-    setEventsCount: React.Dispatch<React.SetStateAction<number>>;
-    eventsCount: number;
-}
-
-const EventsTable = ({ setEventsCount, eventsCount }: EventsTableProps) => {
-    const [isLoading, setIsLoading] = useState(false);
-    const [pagination, setPagination] = useState<PaginationQueryDto>({
-        page: 0,
-        limit: 5,
-    });
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-    const [eventToDelete, setEventToDelete] = useState<string | null>(null);
-
-    const [events, setEvents] = useState<PaginationResponseDto<GetEventAdminResponseDto>>();
-    const { toast } = useToast();
+const EventsTable = () => {
     const { t, i18n } = useTranslation();
-    const language = i18n.language as LanguagesConstants;
+    const lang = i18n.language as LanguagesConstants;
+    const { toast } = useToast();
+    const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+    const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState<GetEventAdminResponseDto | null>(null);
 
-    // Fetch events
-    useEffect(() => {
-        const getEvents = async () => {
-            setIsLoading(true);
-            try {
-                const newEvents = await EventService.getFullEvents(pagination) as PaginationResponseDto<GetEventAdminResponseDto>;
-                setEvents((prev) => {
-                    if (!prev) return newEvents;
-                    return {
-                        ...newEvents,
-                        data: newEvents.data,
-                    };
-                });
-                if (eventsCount !== newEvents.pagination.total) {
-                    setEventsCount(newEvents.pagination.total);
-                }
-                setIsLoading(false);
-            } catch (error) {
-                const errorResponse = error as ErrorResponse;
-                toast({
-                    title: t(TranslationConstants.COMMON.MESSAGES.ERROR),
-                    description: errorResponse.response?.data?.message || t(TranslationConstants.EVENTS.GET_EVENTS_FAILED),
-                    variant: ToastVariantsConstants.ERROR,
-                });
-            } finally {
-                setIsLoading(false);
-            }
-        }
-        getEvents();
-    }, [pagination.page]);
+    const { data: events, isLoading, refetch, error } = useQuery({
+        queryKey: ["events", currentPage, searchQuery],
+        queryFn: async () => {
+                const response = await EventService.getFullEvents({ page: currentPage - 1, limit: 10 }) as PaginationResponseDto<GetEventAdminResponseDto>;
+                return response;
+        },
+    });
 
-    const handlePreviousPage = () => {
-        if (events && events.pagination.page > 0) {
-            setPagination(prev => ({
-                ...prev,
-                page: events.pagination.page - 1
-            }));
-        }
-    };
-
-    const handleNextPage = () => {
-        if (events && events.pagination.hasMore) {
-            setPagination(prev => ({
-                ...prev,
-                page: events.pagination.page + 1
-            }));
-        }
-    };
-
-    const handleDeleteClick = (eventId: string) => {
-        setEventToDelete(eventId);
-        setDeleteDialogOpen(true);
-    };
-
-    const handleDeleteConfirm = async () => {
-        if (!eventToDelete) return;
+    const handleDelete = async () => {
+        if (!selectedEvent) return;
 
         try {
-            await EventService.deleteEvent(eventToDelete);
-            // Refetch the current page
-            const newEvents = await EventService.getFullEvents(pagination) as PaginationResponseDto<GetEventAdminResponseDto>;
-            setEvents(newEvents);
-            setEventsCount(newEvents.pagination.total);
+            await EventService.deleteEvent(selectedEvent._id);
             toast({
                 title: t(TranslationConstants.COMMON.MESSAGES.SUCCESS),
                 description: t(TranslationConstants.COMMON.MESSAGES.SUCCESS_DESCRIPTION),
                 variant: ToastVariantsConstants.SUCCESS,
             });
+            refetch();
         } catch (error) {
             const errorResponse = error as ErrorResponse;
             toast({
@@ -106,141 +63,181 @@ const EventsTable = ({ setEventsCount, eventsCount }: EventsTableProps) => {
                 variant: ToastVariantsConstants.ERROR,
             });
         } finally {
-            setDeleteDialogOpen(false);
-            setEventToDelete(null);
+            setIsDeleteDialogOpen(false);
+            setSelectedEvent(null);
         }
     };
 
+    const handleUpdate = (event: GetEventAdminResponseDto) => {
+        setSelectedEvent(event);
+        setIsUpdateDialogOpen(true);
+    };
+
+    const handleDeleteClick = (event: GetEventAdminResponseDto) => {
+        setSelectedEvent(event);
+        setIsDeleteDialogOpen(true);
+    };
+
+    console.log(events?.pagination.total);
+
     return (
-        <>
-            <Card className="dark:bg-duck-brown/5 border-duck-yellow/20">
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <div>
-                        <CardTitle>
-                            {t(TranslationConstants.ADMIN.EVENTS.MANAGE_EVENTS)}
-                        </CardTitle>
-                    </div>
-                    <Button 
-                        className="bg-duck-yellow hover:bg-duck-yellow/80 text-duck-brown"
+        <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div className="relative w-full sm:w-64">
+                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                        placeholder={t(TranslationConstants.EVENTS.SEARCH_EVENTS)}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-8 border-duck-yellow/20 focus:border-duck-yellow focus:ring-duck-yellow"
+                    />
+                </div>
+                <Button
+                    onClick={() => setIsCreateDialogOpen(true)}
+                    className="w-full sm:w-auto bg-duck-yellow hover:bg-duck-yellow/80 text-duck-brown"
+                >
+                    <Plus className="mr-2 h-4 w-4" />
+                    {t(TranslationConstants.ADMIN.EVENTS.CREATE_EVENT)}
+                </Button>
+            </div>
+
+            <div className="rounded-md border border-duck-yellow/20 bg-card">
+                <Table>
+                    <TableHeader>
+                        <TableRow className="hover:bg-muted/50">
+                            <TableHead className="text-right rtl:text-right ltr:text-left">{t(TranslationConstants.EVENTS.TITLE)}</TableHead>
+                            <TableHead className="text-right rtl:text-right ltr:text-left">{t(TranslationConstants.EVENTS.DESCRIPTION)}</TableHead>
+                            <TableHead className="text-right rtl:text-right ltr:text-left">{t(TranslationConstants.EVENTS.LOCATION)}</TableHead>
+                            <TableHead className="text-right rtl:text-right ltr:text-left">{t(TranslationConstants.EVENTS.PRICE)}</TableHead>
+                            <TableHead className="text-right rtl:text-right ltr:text-left">{t(TranslationConstants.EVENTS.DATE)}</TableHead>
+                            <TableHead className="text-center w-[200px]">{t(TranslationConstants.COMMON.BUTTONS.ACTIONS)}</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {isLoading ? (
+                            <TableRow>
+                                <TableCell colSpan={6} className="text-center">
+                                    <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                                </TableCell>
+                            </TableRow>
+                        ) : error ? (
+                            <TableRow>
+                                <TableCell colSpan={6} className="text-center text-red-500">
+                                    {(error as ErrorResponse)?.response?.data?.message || error.message || t(TranslationConstants.COMMON.MESSAGES.ERROR)}
+                                </TableCell>
+                            </TableRow>
+                        ) : !events ? (
+                            <TableRow>
+                                <TableCell colSpan={6} className="text-center">
+                                    {t(TranslationConstants.COMMON.MESSAGES.ERROR)}
+                                </TableCell>
+                            </TableRow>
+                        ) : events?.data.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={6} className="text-center">
+                                    {t(TranslationConstants.EVENTS.NO_EVENTS)}
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            events.data.map((event: GetEventAdminResponseDto) => (
+                                <TableRow key={event._id} className="hover:bg-muted/50">
+                                    <TableCell className="text-right rtl:text-right ltr:text-left">{event.name[lang as keyof typeof event.name]}</TableCell>
+                                    <TableCell className="text-right rtl:text-right ltr:text-left">{event.description[lang as keyof typeof event.description]}</TableCell>
+                                    <TableCell className="text-right rtl:text-right ltr:text-left">{event.venue[lang as keyof typeof event.venue]}</TableCell>
+                                    <TableCell className="text-right rtl:text-right ltr:text-left">{event.price}</TableCell>
+                                    <TableCell className="text-right rtl:text-right ltr:text-left">{new Date(event.date).toLocaleDateString()}</TableCell>
+                                    <TableCell className="text-center">
+                                        <div className="flex justify-end gap-2 rtl:flex-row-reverse">
+                                            <Button
+                                                variant="outline"
+                                                size="icon"
+                                                onClick={() => navigate(`${PagesRoutesConstants.EVENTS}/${event._id}`)}
+                                                className="border-duck-yellow/20 hover:bg-duck-yellow/10"
+                                                title={t(TranslationConstants.EVENTS.DETAILS)}
+                                            >
+                                                <Eye className="h-4 w-4" />
+                                            </Button>
+                                            <Button
+                                                variant="outline"
+                                                size="icon"
+                                                onClick={() => handleUpdate(event)}
+                                                className="border-duck-yellow/20 hover:bg-duck-yellow/10"
+                                                title={t(TranslationConstants.COMMON.BUTTONS.EDIT)}
+                                            >
+                                                <Pencil className="h-4 w-4" />
+                                            </Button>
+                                            <Button
+                                                variant="outline"
+                                                size="icon"
+                                                onClick={() => handleDeleteClick(event)}
+                                                className="border-red-500/20 hover:bg-red-500/10 text-red-500"
+                                                title={t(TranslationConstants.COMMON.BUTTONS.DELETE)}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
+                    </TableBody>
+                </Table>
+            </div>
+
+            <div className="flex justify-between items-center">
+                <div className="text-sm text-muted-foreground">
+                    {t(TranslationConstants.EVENTS.TOTAL_EVENTS)} {
+                        events?.pagination.total || 0
+                    }
+                </div>
+                <div className="flex space-x-2">
+                    <Button
+                        variant="outline"
+                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                        className="border-duck-yellow/20 hover:bg-duck-yellow/10"
                     >
-                        {t(TranslationConstants.ADMIN.EVENTS.CREATE_EVENT)}
+                        {t(TranslationConstants.COMMON.BUTTONS.PREVIOUS)}
                     </Button>
-                </CardHeader>
-                <CardContent>
-                    {isLoading ? (
-                        <LoadingSpinner />
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead className="bg-gray-50 dark:bg-gray-800">
-                                    <tr>
-                                        <th className="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider rtl:text-right ltr:text-left">
-                                            {t(TranslationConstants.EVENTS.TITLE)}
-                                        </th>
-                                        <th className="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider rtl:text-right ltr:text-left">
-                                            {t(TranslationConstants.EVENTS.DATE)}
-                                        </th>
-                                        <th className="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider rtl:text-right ltr:text-left">
-                                            {t(TranslationConstants.EVENTS.LOCATION)}
-                                        </th>
-                                        <th className="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider rtl:text-right ltr:text-left">
-                                            {t(TranslationConstants.EVENTS.PRICE)}
-                                        </th>
-                                        <th className="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center w-[200px]">
-                                            {t(TranslationConstants.COMMON.BUTTONS.ACTIONS)}
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="dark:bg-duck-brown/5 divide-y divide-duck-yellow/10">
-                                    {events && events.data.length > 0 ? (
-                                        events.data.map((event) => (
-                                            <tr key={event._id} className="hover:bg-gray-50 dark:hover:bg-gray-900/10">
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="text-sm font-medium text-gray-900 dark:text-white">
-                                                        {event.name[language as keyof typeof event.name]}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                                                        {formatDate(event.date)}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                                                        {event.venue[language as keyof typeof event.venue]}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="text-sm text-gray-900 dark:text-white">
-                                                        ${event.price}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        className="text-gray-600 dark:text-gray-400 hover:text-gray-900 hover:bg-duck-yellow/10 mr-2"
-                                                    >
-                                                        {t(TranslationConstants.COMMON.BUTTONS.EDIT)}
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        className="text-red-600 dark:text-red-400 hover:text-red-900 hover:bg-red-100 dark:hover:bg-red-900/10"
-                                                        onClick={() => handleDeleteClick(event._id)}
-                                                    >
-                                                        {t(TranslationConstants.COMMON.BUTTONS.DELETE)}
-                                                    </Button>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td colSpan={5} className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                                                {t(TranslationConstants.EVENTS.NO_EVENTS)}
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                            {events && events.data.length > 0 && (
-                                <div className="flex justify-between items-center mt-4 px-6">
-                                    <Button
-                                        variant="outline"
-                                        onClick={handlePreviousPage}
-                                        disabled={!events || events.pagination.page === 0}
-                                        className="border-duck-yellow/20 hover:bg-duck-yellow/10"
-                                    >
-                                        {t(TranslationConstants.COMMON.BUTTONS.PREVIOUS)}
-                                    </Button>
-                                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                                        {t(TranslationConstants.COMMON.BUTTONS.PAGE)} {events.pagination.page + 1} {t(TranslationConstants.COMMON.BUTTONS.OF)} {events.pagination.totalPages}
-                                    </span>
-                                    <Button
-                                        variant="outline"
-                                        onClick={handleNextPage}
-                                        disabled={!events || !events.pagination.hasMore}
-                                        className="border-duck-yellow/20 hover:bg-duck-yellow/10"
-                                    >
-                                        {t(TranslationConstants.COMMON.BUTTONS.NEXT)}
-                                    </Button>
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
+                    <Button
+                        variant="outline"
+                        onClick={() => setCurrentPage((prev) => prev + 1)}
+                        disabled={!events?.pagination.hasMore}
+                        className="border-duck-yellow/20 hover:bg-duck-yellow/10"
+                    >
+                        {t(TranslationConstants.COMMON.BUTTONS.NEXT)}
+                    </Button>
+                </div>
+            </div>
+
+            <CreateEventDialog
+                isOpen={isCreateDialogOpen}
+                onClose={() => setIsCreateDialogOpen(false)}
+                onSuccess={refetch}
+            />
+
+            {selectedEvent && (
+                <UpdateEventDialog
+                    isOpen={isUpdateDialogOpen}
+                    onClose={() => {
+                        setIsUpdateDialogOpen(false);
+                        setSelectedEvent(null);
+                    }}
+                    onSuccess={refetch}
+                    event={selectedEvent}
+                />
+            )}
 
             <DeleteConfirmationDialog
-                isOpen={deleteDialogOpen}
+                isOpen={isDeleteDialogOpen}
                 onClose={() => {
-                    setDeleteDialogOpen(false);
-                    setEventToDelete(null);
+                    setIsDeleteDialogOpen(false);
+                    setSelectedEvent(null);
                 }}
-                onConfirm={handleDeleteConfirm}
+                onConfirm={handleDelete}
             />
-        </>
+        </div>
     );
-}
+};
 
 export default EventsTable;
