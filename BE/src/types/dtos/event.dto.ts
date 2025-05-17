@@ -218,7 +218,7 @@ export const UpdateEventZod = z.object({
         required_error: VALIDATION_MESSAGES.EVENT.PRICE.REQUIRED,
         invalid_type_error: VALIDATION_MESSAGES.EVENT.PRICE.INVALID_TYPE,
     }).optional(),
-    date: z.date({
+    date: z.coerce.date({
         required_error: VALIDATION_MESSAGES.EVENT.DATE.REQUIRED,
         invalid_type_error: VALIDATION_MESSAGES.EVENT.DATE.INVALID_TYPE,
     }).optional(),

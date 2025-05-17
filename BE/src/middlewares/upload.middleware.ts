@@ -30,6 +30,7 @@ export const uploadEventImage = (req: Request, res: Response, next: NextFunction
         req.body[EVENT_FIELDS.IMAGE_URL] = `${UPLOAD_IMAGES_CONSTANTS.IMAGE_PATH}${req.file.filename}`;
       } else {
         req.body[EVENT_FIELDS.IMAGE_URL] = undefined;
+        delete req.body[EVENT_FIELDS.IMAGE_URL];
       }
 
       next();

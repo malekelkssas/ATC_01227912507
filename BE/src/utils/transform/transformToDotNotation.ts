@@ -9,10 +9,20 @@
  * { "name.en": "Hello", "name.ar": "مرحبا" }
  */
 export const transformToDotNotation = <T extends Record<string, object | unknown>>(data: T): Record<string, unknown> => {
-    return Object.entries(data).reduce((acc, [key, value]) => {
-        if (typeof value === 'object' && value !== null) {
+    const filteredData = Object.entries(data).reduce((acc, [key, value]) => {
+        if (value !== undefined) {
+            acc[key] = value;
+        }
+        return acc;
+    }, {} as Record<string, unknown>);
+
+    // Then transform to dot notation
+    return Object.entries(filteredData).reduce((acc, [key, value]) => {
+        if (typeof value === 'object' && !(value instanceof Date) && value !== null) {
             Object.entries(value).forEach(([nestedKey, nestedValue]) => {
-                acc[`${key}.${nestedKey}`] = nestedValue;
+                if (nestedValue !== undefined) {
+                    acc[`${key}.${nestedKey}`] = nestedValue;
+                }
             });
         } else {
             acc[key] = value;
