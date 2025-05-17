@@ -40,12 +40,25 @@ export class EventRepository extends BaseRepository<IEvent> {
 
     @WrapDatabaseError
     async findWithPagination(item: FilterQuery<IEvent>, options: PaginationQueryDto): Promise<{ data: IEvent[], total: number }> {
+        const query: FilterQuery<IEvent> = { ...item };
+
+        if (options.search) {
+            query.$or = [
+                { 'name.en': { $regex: options.search, $options: 'i' } },
+                { 'name.ar': { $regex: options.search, $options: 'i' } }
+            ];
+        }
+
+        if (options.filter?.category) {
+            query['category'] = options.filter.category;
+        }
+
         const [data, total] = await Promise.all([
-            this.model.find(item)
+            this.model.find(query)
                 .sort({ [EVENT_FIELDS.DATE]: -1 })
                 .skip(options.page * options.limit)
                 .limit(options.limit),
-            this.model.countDocuments(item)
+            this.model.countDocuments(query)
         ]);
         
         return { data, total };

@@ -1,4 +1,4 @@
-import { eventRepository, userRepository } from "@/repository";
+import { eventRepository, userRepository, tagRepository } from "@/repository";
 import { CreateEventDto, CreateEventResponseDto, GetEventResponseDto, IEvent, ITag, LanguageEnum, PaginationQueryDto, UpdateEventDto, PaginationResponseDto, GetFullEventResponseDto, GetEventsAdminResponseDto, GetEventAdminResponseDto } from "@/types";
 import { TagService } from "./tag.service";
 import { NotFoundError, transformToDotNotation } from "@/utils";
@@ -22,6 +22,18 @@ export class EventService {
         return result;
     }
     async getEvents(language: LanguageEnum, pagination: PaginationQueryDto, userId?: string): Promise<PaginationResponseDto<GetEventResponseDto | GetFullEventResponseDto>> {
+        if (pagination.filter?.category) {
+            const categories = await tagRepository.findByName(pagination.filter.category);
+            const categoryIds = categories.map(cat => cat._id);
+            
+            pagination.filter = {
+                ...pagination.filter,
+                category: { $in: categoryIds }
+            };
+        } else {
+            delete pagination.filter;
+        }
+
         const { data: events, total } = await eventRepository.findWithPagination({}, pagination);
         
         const totalPages = Math.ceil(total / pagination.limit);
@@ -45,6 +57,10 @@ export class EventService {
     }
 
     async getFullEvents(pagination: PaginationQueryDto): Promise<PaginationResponseDto<GetEventAdminResponseDto>> {
+        if (pagination.filter) {
+            delete pagination.filter;
+        }
+
         const { data: events, total } = await eventRepository.findWithPagination({}, pagination);
         const totalPages = Math.ceil(total / pagination.limit);
         const hasMore = pagination.page < totalPages - 1;

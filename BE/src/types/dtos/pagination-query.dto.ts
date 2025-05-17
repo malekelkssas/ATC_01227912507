@@ -19,6 +19,11 @@ export const PaginationQueryZod = z.object({
           .max(100, VALIDATION_MESSAGES.PAGINATION.LIMIT.MAX)
           .default(10)
     ),
+    search: z.string().optional(),
+    filter: z.preprocess(
+        (val) => val ? JSON.parse(val as string) : undefined,
+        z.record(z.string(), z.any()).optional()
+    )
 });
 
 export type PaginationQueryDto = z.infer<typeof PaginationQueryZod>;

@@ -50,4 +50,14 @@ export class TagRepository extends BaseRepository<ITag> {
     async create(item: CreateTagDto): Promise<ITag> {
         return this.model.create(item);
     }
+
+    @WrapDatabaseError
+    async findByName(name: string): Promise<ITag[]> {
+        return this.model.find({
+            $or: [
+                { 'name.en': { $regex: name, $options: 'i' } },
+                { 'name.ar': { $regex: name, $options: 'i' } }
+            ]
+        });
+    }
 }
