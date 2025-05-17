@@ -59,6 +59,7 @@ export class TranslationConstants {
     SEARCH_CATEGORIES: 'events.search_categories',
     NO_CATEGORIES: 'events.no_categories',
     CROP_IMAGE: 'events.crop_image',
+    ALL_EVENTS_DESCRIPTION: 'events.all_events_description',
   } as const;
 
   static readonly CATEGORIES = {

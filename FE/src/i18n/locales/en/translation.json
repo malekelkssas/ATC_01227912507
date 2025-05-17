@@ -83,7 +83,8 @@
     "select_categories": "Select categories",
     "selected": "selected",
     "search_categories": "Search categories",
-    "no_categories": "No categories found"
+    "no_categories": "No categories found",
+    "all_events_description": "Explore all the events available in the system"
   },
   "categories": {
     "name": "Name",

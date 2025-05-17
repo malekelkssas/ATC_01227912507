@@ -9,7 +9,9 @@ export const PaginationQueryZod = z.object({
             required_error: TranslationConstants.VALIDATION.REQUIRED.LIMIT,
         }).min(1)
           .max(100)
-          .default(10)
+          .default(10),
+    search: z.string().optional(),
+    filter: z.string().optional(),
 });
 
 export type PaginationQueryDto = z.infer<typeof PaginationQueryZod>;

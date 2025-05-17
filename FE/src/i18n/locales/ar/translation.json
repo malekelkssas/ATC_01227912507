@@ -55,7 +55,8 @@
         "select_categories": "اختر التصنيفات",
         "selected": "محدد",
         "search_categories": "ابحث عن تصنيف",
-        "no_categories": "لا يوجد تصنيفات"
+        "no_categories": "لا يوجد تصنيفات",
+        "all_events_description": "استكشف جميع الفعاليات المتاحة في النظام"
     },
     "categories": {
         "name": "الاسم",
