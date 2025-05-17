@@ -4,6 +4,137 @@
 
 </div>
 
+## 📋 Prerequisites
+
+- Node.js 20 or higher
+- MongoDB
+- npm or yarn
+
+### MongoDB Installation
+
+1. **Download MongoDB Community Server & Install**
+   - Visit [MongoDB Download Center](https://www.mongodb.com/try/download/community)
+   - Select your operating system
+   - Download the latest version
+
+
+2. **Verify Installation**
+   ```bash
+   # Connect to MongoDB
+   mongosh
+   
+   # You should see the MongoDB shell
+   ```
+
+## 📦 Local Setup & Running
+
+1. **Install Node.js 20**
+   - Download and install from [Node.js official website](https://nodejs.org/)
+   - Verify installation:
+     ```bash
+     node --version  # Should show v20.x.x
+     npm --version   # Should show 9.x.x or higher
+     ```
+
+2. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd <repository-name>/BE
+   ```
+
+3. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+4. **Environment Setup**
+   ```bash
+   # Copy the example env file
+   cp .env.example .env
+   ```
+   
+   Update the `.env` file with your configuration:
+   ```env
+   # Server Configuration
+   PORT=3000                    # Port number for the server
+   NODE_ENV=development         # Environment (development/production)
+
+   # MongoDB Configuration
+   MONGODB_URI=mongodb://localhost:27017/quackseats  # MongoDB connection string
+
+   # JWT Configuration
+   JWT_SECRET=your_jwt_secret_here    # Secret key for JWT token generation
+   JWT_EXPIRES_IN=7d                  # JWT token expiration time
+
+   # Admin Configuration (Optional - defaults provided)
+   ADMIN_EMAIL=admin@admin.com        # Default admin email
+   ADMIN_PASSWORD=Admin@123           # Default admin password
+   ```
+
+5. **Start the application in development mode**
+   ```bash
+   npm run dev
+   ```
+
+6. **Start the application in production mode**
+   ```bash
+   npm run build
+   ```
+   then 
+   ```bash
+   npm start
+   ```
+
+## 👤 Default Admin User
+
+When the application starts for the first time with an empty database, a default admin user is automatically created with the following credentials:
+
+```
+Email: admin@admin.com
+Password: Admin@123
+```
+
+You can change these default credentials by setting the following environment variables:
+- `ADMIN_EMAIL`: Custom admin email
+- `ADMIN_PASSWORD`: Custom admin password
+
+
+2. **Environment Setup**
+   ```bash
+   # Copy the example env file
+   cp .env.example .env
+   ```
+   
+   Update the `.env` file with your configuration:
+   ```env
+   # Server Configuration
+   PORT=3000
+   NODE_ENV=development
+
+   # MongoDB Configuration
+   MONGODB_URI=mongodb://localhost:27017/quackseats
+
+   # JWT Configuration
+   JWT_SECRET=your_jwt_secret_here
+   JWT_EXPIRES_IN=7d
+   ```
+
+
+
+4. **Access the Application**
+   - Backend API: http://localhost:3000
+
+## 🔧 Available Scripts
+
+- `npm start` - Start the application
+- `npm run dev` - Start the application in development mode with hot reload
+- `npm run build` - Build the TypeScript code
+- `npm test` - Run tests
+
+## 📝 Notes
+
+- The application runs on port 3000 by default
+
 
 ## Data Schema/Models
 
@@ -59,17 +190,27 @@ erDiagram
 The backend follows a clean, scalable architecture:
 
 ```
-src/
-├── controllers/   # Handle HTTP requests & responses
-├── models/        # Mongoose schemas & models
-├── routes/        # API endpoint definitions
-├── services/      # Business logic layer
-├── repository/    # Data access layer (DB queries & operations)
-├── middlewares/   # Auth, error handling, etc.
-├── utils/         # Reusable helpers & contatns
-├── config/        # Configuration & DB setup
-├── types/         # Shared TypeScript types & interfaces
-└── index.js       # Entry point for Express app
+BE/
+├── src/
+│   ├── controllers/   # Handle HTTP requests & responses
+│   ├── models/        # Mongoose schemas & models
+│   ├── routes/        # API endpoint definitions
+│   ├── services/      # Business logic layer
+│   ├── repository/    # Data access layer (DB queries & operations)
+│   ├── middlewares/   # Auth, error handling, etc.
+│   ├── utils/         # Reusable helpers & constants
+│   ├── config/        # Configuration & DB setup
+│   ├── types/         # Shared TypeScript types & interfaces
+│   └── index.ts       # Entry point for Express app
+├── uploads/           # Uploaded files
+│   └── events/        # Event images
+├── tests/            # Test files
+│   ├── fixtures/     # Test data fixtures
+│   ├── integration/  # API integration tests
+│   └── seeds/        # Database seeding utilities
+├── .env.example      # Example environment variables
+├── .env              # Environment variables
+└── package.json      # Project dependencies
 ```
 
 ---
@@ -98,7 +239,6 @@ A global error handler middleware ([`error-handler.middleware.ts`](./src/middlew
 ```ts
 // Example error response format
 {
-    statusCode: number,
     message: string
 }
 ```

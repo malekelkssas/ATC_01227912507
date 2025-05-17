@@ -11,4 +11,6 @@ export const config = {
   jwtExpiration: process.env.JWT_EXPIRATION || '1d',
   jwtRefreshExpiration: process.env.JWT_REFRESH_EXPIRATION || '7d',
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET || 'The Quack is the best',
+  adminEmail: process.env.ADMIN_EMAIL || 'admin@admin.com',
+  adminPassword: process.env.ADMIN_PASSWORD || 'Admin@123',
 };
