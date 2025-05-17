@@ -39,7 +39,7 @@ const AdminDashboard: React.FC = () => {
 
 
 
-  if(!user) return <ProgressLoader />;
+  if(!user || user.role !== UserRoleEnum.ADMIN) return <ProgressLoader />;
 
   return (
     <Layout>

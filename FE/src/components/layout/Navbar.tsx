@@ -52,8 +52,8 @@ const Navbar: React.FC = () => {
               {t(TranslationConstants.NAV.EVENTS)}
             </Link>
 
-            {user && (
-              <Link to={user.role === UserRoleEnum.ADMIN ? PagesRoutesConstants.ADMIN_DASHBOARD : PagesRoutesConstants.USER_DASHBOARD} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-duck-yellow/10 transition-colors duration-200">
+            {user && user.role === UserRoleEnum.ADMIN && (
+              <Link to={PagesRoutesConstants.ADMIN_DASHBOARD} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-duck-yellow/10 transition-colors duration-200">
                 {t(TranslationConstants.NAV.DASHBOARD)}
               </Link>
             )}
@@ -106,8 +106,8 @@ const Navbar: React.FC = () => {
               {t(TranslationConstants.NAV.EVENTS)}
             </Link>
 
-            {user && (
-              <Link to={user.role === UserRoleEnum.ADMIN ? PagesRoutesConstants.ADMIN_DASHBOARD : PagesRoutesConstants.USER_DASHBOARD} className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-duck-yellow/10">
+            {user && user.role === UserRoleEnum.ADMIN && (
+              <Link to={PagesRoutesConstants.ADMIN_DASHBOARD} className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-duck-yellow/10 transition-colors duration-200">
                 {t(TranslationConstants.NAV.DASHBOARD)}
               </Link>
             )}

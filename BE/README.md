@@ -76,7 +76,7 @@
    npm run dev
    ```
 
-6. **Start the application in production mode**
+6. **OR Start the application in production mode**
    ```bash
    npm run build
    ```
