@@ -43,7 +43,9 @@
       "success": "Success!",
       "error": "Error!",
       "not_found": "Oops! Page not found",
-      "success_description": "Your action was completed successfully."
+      "success_description": "Your action was completed successfully.",
+      "delete_confirmation_title": "Are you sure?",
+      "delete_confirmation_description": "This action cannot be undone. This will permanently delete the item."
     }
   },
   "events": {
@@ -71,12 +73,23 @@
     "no_events": "No events found",
     "total_events": "Total events in the system"
   },
+  "categories": {
+    "name": "Name",
+    "color": "Color",
+    "no_categories": "No categories found",
+    "manage_categories": "Manage Categories"
+  },
   "admin": {
     "dashboard": {
       "title": "Admin Dashboard"
     },
+    "categories": {
+      "manage_categories": "Manage Categories",
+      "create_category": "Create Category"
+    },
     "events": {
-      "manage_events": "Manage Events"
+      "manage_events": "Manage Events",
+      "create_event": "Create Event"
     }
   },
   "validation": {

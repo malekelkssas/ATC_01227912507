@@ -12,11 +12,19 @@ import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import ProgressLoader from '@/components/shared/ProgressLoader';
 
 const EventsTable = lazy(() => import('@/components/pages/admin/EventsTable'));
+const CategoriesTable = lazy(() => import('@/components/pages/admin/CategoriesTable'));
+
+enum AdminDashboardTabs {
+  EVENTS = 'events',
+  CATEGORIES = 'categories',
+}
 
 const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [eventsCount, setEventsCount] = useState(0);
+  const [categoriesCount, setCategoriesCount] = useState(0);
+  const [activeTab, setActiveTab] = useState<AdminDashboardTabs>(AdminDashboardTabs.EVENTS);
   
   const { user } = useAppSelector(state => state.auth);
 
@@ -30,12 +38,6 @@ const AdminDashboard: React.FC = () => {
 
 
 
-  // Mock users data
-  const users = [
-    { id: '1', name: 'John Doe', email: 'john@example.com', role: 'user' },
-    { id: '2', name: 'Jane Smith', email: 'jane@example.com', role: 'user' },
-    { id: '3', name: 'Admin User', email: 'admin@example.com', role: 'admin' },
-  ];
 
   if(!user) return <ProgressLoader />;
 
@@ -48,40 +50,6 @@ const AdminDashboard: React.FC = () => {
           </h1>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <Card className="dark:bg-duck-brown/5 border-duck-yellow/20">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">
-                {t(TranslationConstants.EVENTS.ALL_EVENTS)}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-duck-brown dark:text-duck-yellow">{eventsCount}</div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{t(TranslationConstants.EVENTS.TOTAL_EVENTS)}</p>
-            </CardContent>
-          </Card>
-          
-          <Card className="dark:bg-duck-brown/5 border-duck-yellow/20">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Users</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-duck-brown dark:text-duck-yellow">{users.length}</div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Registered users</p>
-            </CardContent>
-          </Card>
-          
-          <Card className="dark:bg-duck-brown/5 border-duck-yellow/20">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Bookings</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-duck-brown dark:text-duck-yellow">24</div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Total bookings</p>
-            </CardContent>
-          </Card>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           
           {/* Left sidebar */}
@@ -89,22 +57,24 @@ const AdminDashboard: React.FC = () => {
             <Card className="dark:bg-duck-brown/5 border-duck-yellow/20">
               <CardHeader>
                 <CardTitle>
-                  Admin Dashboard
+                {t(TranslationConstants.ADMIN.DASHBOARD.TITLE)}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   <Button 
-                    variant="outline"
-                    className="w-full justify-start border-duck-nature/20 hover:bg-duck-nature/10"
+                    variant={activeTab === AdminDashboardTabs.EVENTS ? "default" : "outline"}
+                    className={`w-full justify-start border-duck-nature/20 ${activeTab === AdminDashboardTabs.EVENTS ? "": "hover:bg-duck-nature/10"}`}
+                    onClick={() => setActiveTab(AdminDashboardTabs.EVENTS)}
                   >
-                    Create Event
+                    {t(TranslationConstants.EVENTS.ALL_EVENTS)}
                   </Button>
                   <Button 
-                    variant="outline" 
-                    className="w-full justify-start border-duck-nature/20 hover:bg-duck-nature/10"
+                    variant={activeTab === AdminDashboardTabs.CATEGORIES ? "default" : "outline"}
+                    className={`w-full justify-start border-duck-nature/20 ${activeTab === AdminDashboardTabs.CATEGORIES ? "": "hover:bg-duck-nature/10"}`}
+                    onClick={() => setActiveTab(AdminDashboardTabs.CATEGORIES)}
                   >
-                    Create Admin
+                    {t(TranslationConstants.CATEGORIES.MANAGE_CATEGORIES)}
                   </Button>
                 </div>
               </CardContent>
@@ -114,74 +84,17 @@ const AdminDashboard: React.FC = () => {
           {/* Main content */}
           <div className="md:col-span-9">
             {/* Events Table */}
-            <Suspense fallback={<LoadingSpinner />}>
-              <EventsTable setEventsCount={setEventsCount} eventsCount={eventsCount} />
-            </Suspense>
+            {activeTab === AdminDashboardTabs.EVENTS && (
+              <Suspense fallback={<LoadingSpinner />}>
+                <EventsTable setEventsCount={setEventsCount} eventsCount={eventsCount} />
+              </Suspense>
+            )}
+            {activeTab === AdminDashboardTabs.CATEGORIES && (
+              <Suspense fallback={<LoadingSpinner />}>
+                <CategoriesTable setCategoriesCount={setCategoriesCount} categoriesCount={categoriesCount} />
+              </Suspense>
+            )}
 
-            <Card className="dark:bg-duck-brown/5 border-duck-yellow/20 mt-6">
-              <CardHeader>
-                <CardTitle>
-                  {/* {t('dashboard.admin.manageUsers')} */}
-                  Manage Users
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-50 dark:bg-gray-800">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Name
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Email
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Role
-                        </th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="dark:bg-duck-brown/5 divide-y divide-duck-yellow/10">
-                      {users.map((user) => (
-                        <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-900/10">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-medium text-gray-900 dark:text-white">
-                              {user.name}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-500 dark:text-gray-400">
-                              {user.email}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              user.role === 'admin' 
-                                ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' 
-                                : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                            }`}>
-                              {user.role}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              className="text-gray-600 dark:text-gray-400 hover:text-gray-900 hover:bg-duck-yellow/10"
-                            >
-                              Manage
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>

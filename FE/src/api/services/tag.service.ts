@@ -10,9 +10,12 @@ export class TagService {
         const response = await api.get(`/${baseUrl}`);
         return response.data;
     }
-
     static async getFullTags(): Promise<GetFullTagsResponseDto | ErrorResponse> {
         const response = await api.get(`/${baseUrl}/${BeRoutesConstants.FULL_TAGS}`);
+        return response.data;
+    }
+    static async deleteTag(tagId: string): Promise<void | ErrorResponse> {
+        const response = await api.delete(`/${baseUrl}/${tagId}`);
         return response.data;
     }
 

@@ -53,6 +53,13 @@ export class TranslationConstants {
     TOTAL_EVENTS: 'events.total_events',
   } as const;
 
+  static readonly CATEGORIES = {
+    NAME: 'categories.name',
+    COLOR: 'categories.color',
+    NO_CATEGORIES: 'categories.no_categories',
+    MANAGE_CATEGORIES: 'categories.manage_categories',
+  } as const;
+
   static readonly COMMON = {
     LOADING: 'common.loading',
     BUTTONS: {
@@ -72,6 +79,8 @@ export class TranslationConstants {
       ERROR: 'common.messages.error',
       NOT_FOUND: 'common.messages.not_found',
       SUCCESS_DESCRIPTION: 'common.messages.success_description',
+      DELETE_CONFIRMATION_TITLE: 'common.messages.delete_confirmation_title',
+      DELETE_CONFIRMATION_DESCRIPTION: 'common.messages.delete_confirmation_description',
     },
   } as const;
 
@@ -101,8 +110,13 @@ export class TranslationConstants {
     DASHBOARD: {
       TITLE: 'admin.dashboard.title',
     },
+    CATEGORIES: {
+      MANAGE_CATEGORIES: 'admin.categories.manage_categories',
+      CREATE_CATEGORY: 'admin.categories.create_category',
+    },
     EVENTS: {
       MANAGE_EVENTS: 'admin.events.manage_events',
+      CREATE_EVENT: 'admin.events.create_event',
     }
   } as const; 
 } 

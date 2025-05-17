@@ -25,4 +25,8 @@ export class EventService {
         const response = await api.get(`/${baseUrl}/${BeRoutesConstants.FULL_EVENTS}`, { params: query });
         return response.data;
     }
+    static async deleteEvent(id: IdParamDto): Promise<void | ErrorResponse> {
+        const response = await api.delete(`/${baseUrl}/${id}`);
+        return response.data;
+    }
 }

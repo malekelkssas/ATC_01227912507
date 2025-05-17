@@ -49,12 +49,23 @@
         "no_events": "لا يوجد فعاليات",
         "total_events": "إجمالي الفعاليات في النظام"
     },
+    "categories": {
+        "name": "الاسم",
+        "color": "اللون",
+        "no_categories": "لا يوجد تصنيفات",
+        "manage_categories": "إدارة التصنيفات"
+    },
     "admin": {
         "dashboard": {
             "title": "لوحة التحكم الإدارية"
         },
+        "categories": {
+            "manage_categories": "إدارة التصنيفات",
+            "create_category": "إنشاء تصنيف"
+        },
         "events": {
-            "manage_events": "إدارة الفعاليات"
+            "manage_events": "إدارة الفعاليات",
+            "create_event": "إنشاء فعالية"
         }
     },
     "common": {
@@ -75,7 +86,9 @@
             "success": "تم بنجاح!",
             "error": "خطأ!",
             "not_found": "الصفحة غير موجودة",
-            "success_description": "تم إكمال العملية بنجاح"
+            "success_description": "تم إكمال العملية بنجاح",
+            "delete_confirmation_title": "هل أنت متأكد؟",
+            "delete_confirmation_description": "لا يمكن التراجع عن هذا الإجراء. سيتم حذف العنصر نهائياً."
         }
     },
     "validation": {
