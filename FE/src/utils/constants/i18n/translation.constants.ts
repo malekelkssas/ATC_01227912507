@@ -75,6 +75,8 @@ export class TranslationConstants {
       NEXT: 'common.buttons.next',
       SUBMIT: 'common.buttons.submit',
       CANCEL: 'common.buttons.cancel',
+      CREATE: 'common.buttons.create',
+      UPDATE: 'common.buttons.update',
       THEME_TOGGLE: 'common.buttons.theme_toggle',
       EDIT: 'common.buttons.edit',
       DELETE: 'common.buttons.delete',
@@ -194,9 +196,38 @@ export class TranslationConstants {
       UPDATE: {
         EMPTY: 'validation.event.update.empty'
       }
-    }
+    },
+    TAG: {
+      NAME: {
+        EN: {
+          REQUIRED: 'validation.tag.name.en.required',
+          MIN_LENGTH: 'validation.tag.name.en.min_length',
+          MAX_LENGTH: 'validation.tag.name.en.max_length'
+        },
+        AR: {
+          REQUIRED: 'validation.tag.name.ar.required',
+          MIN_LENGTH: 'validation.tag.name.ar.min_length',
+          MAX_LENGTH: 'validation.tag.name.ar.max_length'
+        },
+        INVALID_TYPE: 'validation.tag.name.invalid_type',
+        REQUIRED_OBJECT: 'validation.tag.name.required_object',
+        EMPTY: 'validation.tag.name.empty'
+      },
+      COLOR: {
+        REQUIRED: 'validation.tag.color.required',
+        INVALID_FORMAT: 'validation.tag.color.invalid_format'
+      },
+      UPDATE: {
+        EMPTY: 'validation.tag.update.empty'
+      }
+    },
   } as const;
   static readonly ADMIN = {
+    TAGS: {
+      MANAGE_TAGS: 'admin.tags.manage_tags',
+      CREATE_TAG: 'admin.tags.create_tag',
+      UPDATE_TAG: 'admin.tags.update_tag',
+    },
     DASHBOARD: {
       TITLE: 'admin.dashboard.title',
     },

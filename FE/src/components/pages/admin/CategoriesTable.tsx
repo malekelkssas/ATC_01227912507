@@ -9,6 +9,17 @@ import { ToastVariantsConstants } from "@/utils/constants";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import DeleteConfirmationDialog from "@/components/shared/DeleteConfirmationDialog";
+import CreateTagDialog from "./CreateTagDialog";
+import UpdateTagDialog from "./UpdateTagDialog";
+import { Pencil, Trash2 } from "lucide-react";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
 
 interface CategoriesTableProps {
     setCategoriesCount: React.Dispatch<React.SetStateAction<number>>;
@@ -19,39 +30,47 @@ const CategoriesTable = ({ setCategoriesCount, categoriesCount }: CategoriesTabl
     const [isLoading, setIsLoading] = useState(false);
     const [categories, setCategories] = useState<GetFullTagsResponseDto>([]);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [createDialogOpen, setCreateDialogOpen] = useState(false);
+    const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
     const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
+    const [categoryToUpdate, setCategoryToUpdate] = useState<GetFullTagsResponseDto[0] | null>(null);
     const { toast } = useToast();
     const { t, i18n } = useTranslation();
     const language = i18n.language as LanguagesConstants;
 
     // Fetch categories
-    useEffect(() => {
-        const getCategories = async () => {
-            setIsLoading(true);
-            try {
-                const newCategories = await TagService.getFullTags() as GetFullTagsResponseDto;
-                setCategories(newCategories);
-                if (categoriesCount !== newCategories.length) {
-                    setCategoriesCount(newCategories.length);
-                }
-
-            } catch (error) {
-                const errorResponse = error as ErrorResponse;
-                toast({
-                    title: t(TranslationConstants.COMMON.MESSAGES.ERROR),
-                    description: errorResponse.response?.data?.message || t(TranslationConstants.COMMON.MESSAGES.ERROR),
-                    variant: ToastVariantsConstants.ERROR,
-                });
-            } finally {
-                setIsLoading(false);
+    const fetchCategories = async () => {
+        setIsLoading(true);
+        try {
+            const newCategories = await TagService.getFullTags() as GetFullTagsResponseDto;
+            setCategories(newCategories);
+            if (categoriesCount !== newCategories.length) {
+                setCategoriesCount(newCategories.length);
             }
+        } catch (error) {
+            const errorResponse = error as ErrorResponse;
+            toast({
+                title: t(TranslationConstants.COMMON.MESSAGES.ERROR),
+                description: errorResponse.response?.data?.message || t(TranslationConstants.COMMON.MESSAGES.ERROR),
+                variant: ToastVariantsConstants.ERROR,
+            });
+        } finally {
+            setIsLoading(false);
         }
-        getCategories();
+    };
+
+    useEffect(() => {
+        fetchCategories();
     }, []);
 
     const handleDeleteClick = (categoryId: string) => {
         setCategoryToDelete(categoryId);
         setDeleteDialogOpen(true);
+    };
+
+    const handleUpdateClick = (category: GetFullTagsResponseDto[0]) => {
+        setCategoryToUpdate(category);
+        setUpdateDialogOpen(true);
     };
 
     const handleDeleteConfirm = async () => {
@@ -90,6 +109,7 @@ const CategoriesTable = ({ setCategoriesCount, categoriesCount }: CategoriesTabl
                     </div>
                     <Button 
                         className="bg-duck-yellow hover:bg-duck-yellow/80 text-duck-brown"
+                        onClick={() => setCreateDialogOpen(true)}
                     >
                         {t(TranslationConstants.ADMIN.CATEGORIES.CREATE_CATEGORY)}
                     </Button>
@@ -98,31 +118,31 @@ const CategoriesTable = ({ setCategoriesCount, categoriesCount }: CategoriesTabl
                     {isLoading ? (
                         <LoadingSpinner />
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead className="bg-gray-50 dark:bg-gray-800">
-                                    <tr>
-                                        <th className="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider rtl:text-right ltr:text-left">
+                        <div className="rounded-md border border-duck-yellow/20 bg-card">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow className="hover:bg-muted/50">
+                                        <TableHead className="text-right rtl:text-right ltr:text-left">
                                             {t(TranslationConstants.CATEGORIES.NAME)}
-                                        </th>
-                                        <th className="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider rtl:text-right ltr:text-left">
+                                        </TableHead>
+                                        <TableHead className="text-right rtl:text-right ltr:text-left">
                                             {t(TranslationConstants.CATEGORIES.COLOR)}
-                                        </th>
-                                        <th className="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center w-[200px]">
+                                        </TableHead>
+                                        <TableHead className="text-center w-[200px]">
                                             {t(TranslationConstants.COMMON.BUTTONS.ACTIONS)}
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="dark:bg-duck-brown/5 divide-y divide-duck-yellow/10">
+                                        </TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
                                     {categories && categories.length > 0 ? (
                                         categories.map((category) => (
-                                            <tr key={category._id} className="hover:bg-gray-50 dark:hover:bg-gray-900/10">
-                                                <td className="px-6 py-4 whitespace-nowrap">
+                                            <TableRow key={category._id} className="hover:bg-muted/50">
+                                                <TableCell className="text-right rtl:text-right ltr:text-left">
                                                     <div className="text-sm font-medium text-gray-900 dark:text-white">
                                                         {category.name[language as keyof typeof category.name]}
                                                     </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                </TableCell>
+                                                <TableCell className="text-right rtl:text-right ltr:text-left">
                                                     <div className="flex items-center">
                                                         <div
                                                             className="w-6 h-6 rounded-full rtl:ml-2 ltr:mr-2"
@@ -132,36 +152,40 @@ const CategoriesTable = ({ setCategoriesCount, categoriesCount }: CategoriesTabl
                                                             {category.color}
                                                         </span>
                                                     </div>
-
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        className="text-gray-600 dark:text-gray-400 hover:text-gray-900 hover:bg-duck-yellow/10 mr-2"
-                                                    >
-                                                        {t(TranslationConstants.COMMON.BUTTONS.EDIT)}
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        className="text-red-600 dark:text-red-400 hover:text-red-900 hover:bg-red-100 dark:hover:bg-red-900/10"
-                                                        onClick={() => handleDeleteClick(category._id)}
-                                                    >
-                                                        {t(TranslationConstants.COMMON.BUTTONS.DELETE)}
-                                                    </Button>
-                                                </td>
-                                            </tr>
+                                                </TableCell>
+                                                <TableCell className="text-center">
+                                                    <div className="flex justify-center gap-2 rtl:gap-2 rtl:flex-row-reverse">
+                                                        <Button
+                                                            variant="outline"
+                                                            size="icon"
+                                                            onClick={() => handleUpdateClick(category)}
+                                                            className="border-duck-yellow/20 hover:bg-duck-yellow/10"
+                                                            title={t(TranslationConstants.COMMON.BUTTONS.EDIT)}
+                                                        >
+                                                            <Pencil className="h-4 w-4" />
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="icon"
+                                                            onClick={() => handleDeleteClick(category._id)}
+                                                            className="border-red-500/20 hover:bg-red-500/10 text-red-500"
+                                                            title={t(TranslationConstants.COMMON.BUTTONS.DELETE)}
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </Button>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
                                         ))
                                     ) : (
-                                        <tr>
-                                            <td colSpan={3} className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                        <TableRow>
+                                            <TableCell colSpan={3} className="text-center text-gray-500 dark:text-gray-400">
                                                 {t(TranslationConstants.CATEGORIES.NO_CATEGORIES)}
-                                            </td>
-                                        </tr>
+                                            </TableCell>
+                                        </TableRow>
                                     )}
-                                </tbody>
-                            </table>
+                                </TableBody>
+                            </Table>
                         </div>
                     )}
                 </CardContent>
@@ -175,6 +199,24 @@ const CategoriesTable = ({ setCategoriesCount, categoriesCount }: CategoriesTabl
                 }}
                 onConfirm={handleDeleteConfirm}
             />
+
+            <CreateTagDialog
+                isOpen={createDialogOpen}
+                onClose={() => setCreateDialogOpen(false)}
+                onSuccess={fetchCategories}
+            />
+
+            {categoryToUpdate && (
+                <UpdateTagDialog
+                    isOpen={updateDialogOpen}
+                    onClose={() => {
+                        setUpdateDialogOpen(false);
+                        setCategoryToUpdate(null);
+                    }}
+                    onSuccess={fetchCategories}
+                    tag={categoryToUpdate}
+                />
+            )}
         </>
     );
 }

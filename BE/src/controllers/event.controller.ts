@@ -9,7 +9,7 @@ import {
   UpdateEventDto,
   UpdateEventZod,
 } from "@/types";
-import { decodeToken, extractLanguage, extractToken, HTTP_STATUS_CODE, TryCatchController } from "@/utils";
+import { extractLanguage, HTTP_STATUS_CODE, TryCatchController } from "@/utils";
 import { Request, Response } from "express";
 
 export class EventController {

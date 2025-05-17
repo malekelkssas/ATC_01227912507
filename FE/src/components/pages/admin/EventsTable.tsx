@@ -147,7 +147,7 @@ const EventsTable = () => {
                                     <TableCell className="text-right rtl:text-right ltr:text-left">{event.price}</TableCell>
                                     <TableCell className="text-right rtl:text-right ltr:text-left">{new Date(event.date).toLocaleDateString()}</TableCell>
                                     <TableCell className="text-center">
-                                        <div className="flex justify-end gap-2 rtl:flex-row-reverse">
+                                        <div className="flex justify-center gap-2 rtl:flex-row-reverse">
                                             <Button
                                                 variant="outline"
                                                 size="icon"
